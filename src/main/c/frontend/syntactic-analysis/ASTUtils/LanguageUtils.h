@@ -1,0 +1,16 @@
+#ifndef LANGUAGE_UTILS_H
+#define LANGUAGE_UTILS_H
+
+#include "../AbstractSyntaxTree.h"
+
+void initializeLanguageUtilsModule();
+void shutdownLanguageUtilsModule();
+
+void LanguageBinding_free(LanguageBinding* languageBinding);
+void LanguageExpression_free(LanguageExpression* languageExpression);
+void Language_free(Language* language);
+char* LanguageBinding_toString(LanguageBinding* languageBinding);
+char* LanguageExpression_toString(LanguageExpression* languageExpression);
+char LanguageExpressionType_toString(LanguageExpressionType type);
+
+#endif

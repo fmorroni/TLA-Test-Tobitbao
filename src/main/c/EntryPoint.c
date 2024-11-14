@@ -1,7 +1,7 @@
 // #include "backend/code-generation/Generator.h"
 // #include "backend/domain-specific/Calculator.h"
 #include "frontend/lexical-analysis/FlexActions.h"
-#include "frontend/syntactic-analysis/ASTUtils.h"
+#include "frontend/syntactic-analysis/ASTUtils/SentenceUtils.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions.h"
 #include "frontend/syntactic-analysis/SyntacticAnalyzer.h"
@@ -9,7 +9,6 @@
 #include "shared/CompilerState.h"
 #include "shared/Logger.h"
 #include "shared/Set.h"
-#include "shared/Type.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -28,7 +27,6 @@ int main(const int count, const char** arguments) {
   // initializeGeneratorModule();
   Array_initializeLogger();
   Set_initializeLogger();
-  initializeASTUtilsModule();
 
   // Logs the arguments of the application.
   for (int k = 0; k < count; ++k) {
@@ -73,7 +71,6 @@ int main(const int count, const char** arguments) {
   logDebugging(logger, "Releasing modules resources...");
   Array_freeLogger();
   Set_freeLogger();
-  shutdownASTUtilsModule();
   // shutdownGeneratorModule();
   // shutdownCalculatorModule();
   shutdownAbstractSyntaxTreeModule();

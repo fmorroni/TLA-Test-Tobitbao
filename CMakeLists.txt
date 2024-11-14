@@ -64,7 +64,13 @@ add_executable(Compiler
 	src/main/c/frontend/syntactic-analysis/BisonActions.c
 	src/main/c/frontend/syntactic-analysis/BisonParser.c
 	src/main/c/frontend/syntactic-analysis/SyntacticAnalyzer.c
-  src/main/c/frontend/syntactic-analysis/ASTUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/GrammarUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/LanguageUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/ProductionRhsUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/ProductionUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/ProgramUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/SentenceUtils.c
+  src/main/c/frontend/syntactic-analysis/ASTUtils/SymbolUtils.c
 	src/main/c/shared/Environment.c
 	src/main/c/shared/Logger.c
 	src/main/c/shared/String.c

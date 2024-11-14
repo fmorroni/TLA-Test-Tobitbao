@@ -1,0 +1,11 @@
+#ifndef COLOR_MACROS_H
+#define COLOR_MACROS_H
+
+#define RESET_COLOR "\033[0m"
+#define GREEN_COLOR "\033[0;32m"
+#define BLUE_COLOR "\033[0;34m"
+
+#define COLORIZE_SYMBOL(str) GREEN_COLOR str RESET_COLOR
+#define COLORIZE_ID(str) BLUE_COLOR str RESET_COLOR
+
+#endif

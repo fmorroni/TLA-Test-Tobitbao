@@ -7,7 +7,10 @@
 #include "../../shared/SetElement.h"
 #include "../../shared/String.h"
 #include "../../shared/utils.h"
-#include "ASTUtils.h"
+#include "ASTUtils/ProductionRhsUtils.h"
+#include "ASTUtils/ProductionUtils.h"
+#include "ASTUtils/SentenceUtils.h"
+#include "ASTUtils/SymbolUtils.h"
 #include "AbstractSyntaxTree.h"
 #include <stdarg.h>
 #include <stdio.h>
