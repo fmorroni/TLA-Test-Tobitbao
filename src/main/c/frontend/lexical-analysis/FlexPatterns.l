@@ -94,7 +94,7 @@ symbol_r [^[:space:],{}]+
                                     }
 %{
 // Note: The `{symbol_r}` rule matches the same strings as the reserved tokens, so it has to go last
-// so that the reserved tokens have precedence.
+// so that the reserved tokens take precedence.
 %}
 <SET_DEFINITION>"lambda"            { return TokenLexemeAction(createLexicalAnalyzerContext(), LAMBDA); }
 <SET_DEFINITION>"|"                 { return TokenLexemeAction(createLexicalAnalyzerContext(), PIPE); }
