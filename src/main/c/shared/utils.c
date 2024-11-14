@@ -24,7 +24,6 @@ void exitWithPerror(const char* functionName, const char* msg) {
     printf("%s\n", strs[i]);
   }
   free((void*)strs);
-  return;
   exit(EXIT_FAILURE);
 }
 
