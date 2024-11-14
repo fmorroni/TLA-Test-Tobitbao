@@ -11,7 +11,6 @@
 typedef struct ArrayCDT* Array;
 
 typedef void (*FreeEleFn)(ArrayElement ele);
-
 /**
  * @typedef `ToStringEleFn`
  *
@@ -21,28 +20,24 @@ typedef void (*FreeEleFn)(ArrayElement ele);
  */
 typedef char* (*ToStringEleFn)(ArrayElement ele);
 
-Array Array_new(size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStringEleFn);
-void Array_free(Array array);
-ArrayElement Array_get(Array array, int64_t idx);
-void Array_push(Array array, ArrayElement ele);
-void Array_pop(Array array);
-size_t Array_getLen(Array array);
-
 /**
  * @param `dest` Destination array, all elements from `src` will be pushed to `dest`.
  * @param `src` Source array. Will be freed after call to prevent double free errors on the elements.
  */
 void Array_concat(Array dest, Array src);
-
+void Array_free(Array array);
+void Array_freeLogger();
+ArrayElement Array_get(Array array, int64_t idx);
+size_t Array_getLen(Array array);
+void Array_initializeLogger();
+Array Array_new(size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStringEleFn);
+void Array_pop(Array array);
+void Array_printInfo(Array array);
+void Array_push(Array array, ArrayElement ele);
 /**
  * @param `array` The array to be converted to string.
  * @return Heap-allocated `char*` representing `array`.
  */
 char* Array_toString(Array array);
-
-void Array_printInfo(Array array);
-
-void Array_initializeLogger();
-void Array_freeLogger();
 
 #endif

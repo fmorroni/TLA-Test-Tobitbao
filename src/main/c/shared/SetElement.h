@@ -4,9 +4,9 @@
 #include "../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 
 typedef union SetElement {
-  Symbol symbol;
   Production* production;
   ProductionRhsRule* productionRhsRule;
+  Symbol symbol;
 } SetElement;
 
 #endif

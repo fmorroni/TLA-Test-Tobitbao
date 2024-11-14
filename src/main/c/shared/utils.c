@@ -1,3 +1,4 @@
+#include "utils.h"
 #include <errno.h>
 #include <execinfo.h>
 #include <stdio.h>
@@ -5,6 +6,15 @@
 #include <string.h>
 
 enum { CALLSTACK_LEN = 128, EXTRA_MSG_LEN = 20 };
+
+void exitInvalidArgument(const char* functionName, const char* msg) {
+  exitWithErrno(EINVAL, functionName, msg);
+}
+
+void exitWithErrno(int errnoVal, const char* functionName, const char* msg) {
+  errno = errnoVal;
+  exitWithPerror(functionName, msg);
+}
 
 void exitWithPerror(const char* functionName, const char* msg) {
   size_t functionNameLen = strlen(functionName);
@@ -27,23 +37,14 @@ void exitWithPerror(const char* functionName, const char* msg) {
   exit(EXIT_FAILURE);
 }
 
-void exitWithErrno(int errnoVal, const char* functionName, const char* msg) {
-  errno = errnoVal;
-  exitWithPerror(functionName, msg);
-}
-
-void exitInvalidArgument(const char* functionName, const char* msg) {
-  exitWithErrno(EINVAL, functionName, msg);
+void* safeCalloc(size_t n, size_t size) {
+  void* ptr = calloc(n, size);
+  if (ptr == NULL) exitWithPerror(__func__, "@calloc error");
+  return ptr;
 }
 
 void* safeMalloc(size_t size) {
   void* ptr = malloc(size);
   if (ptr == NULL) exitWithPerror(__func__, "@malloc error");
-  return ptr;
-}
-
-void* safeCalloc(size_t n, size_t size) {
-  void* ptr = calloc(n, size);
-  if (ptr == NULL) exitWithPerror(__func__, "@calloc error");
   return ptr;
 }

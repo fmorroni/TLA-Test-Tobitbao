@@ -4,10 +4,10 @@
 #include "../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 
 typedef union ArrayElement {
-  Sentence* sentence;
-  Symbol symbol;
   Production* production;
   ProductionRhsRule* productionRhsRule;
+  Sentence* sentence;
+  Symbol symbol;
 } ArrayElement;
 
 #endif

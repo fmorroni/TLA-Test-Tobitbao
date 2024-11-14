@@ -41,55 +41,10 @@ typedef struct SetIteratorCDT {
 
 enum { INITIAL_CAPACITY = 100 };
 
-static uint32_t hashIdx(Set set, SetElement ele, uint32_t* idx);
-static void growTo(Set set, size_t newCapacity);
 static void growBy(Set set, size_t extraCapacity);
+static void growTo(Set set, size_t newCapacity);
+static uint32_t hashIdx(Set set, SetElement ele, uint32_t* idx);
 static Node* Node_new(SetElement ele, uint32_t hash);
-
-Set Set_new(
-  Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_FreeEleFn freeEleFn, Set_ToStringEleFn toStringEleFn
-) {
-  if (hashEleFn == NULL || equalsEleFn == NULL) {
-    exitInvalidArgument(__func__, "Both `hashEleFn` and `equalsEleFn` are required arguments");
-  }
-  SetCDT* set = malloc(sizeof(SetCDT));
-  if (set == NULL) exitWithPerror(__func__, "malloc error");
-  set->capacity = INITIAL_CAPACITY;
-  set->nodes = (Node**)calloc(set->capacity, sizeof(Node*));
-  if (set->nodes == NULL) {
-    free(set);
-    exitWithPerror(__func__, "malloc error");
-  }
-  set->count = 0;
-  set->hashEleFn = hashEleFn;
-  set->equalsEleFn = equalsEleFn;
-  set->freeEleFn = freeEleFn;
-  set->toStringEleFn = toStringEleFn;
-  return set;
-}
-
-void Set_free(Set set) {
-  if (set == NULL) SET_INSTANCE_NULL;
-  // size_t count = 0;
-  for (int i = 0; i < set->capacity; ++i) {
-    Node* node = set->nodes[i];
-    while (node != NULL) {
-      if (set->freeEleFn != NULL) set->freeEleFn(node->element);
-      Node* prev = node;
-      node = node->next;
-      free(prev);
-      // if (++count >= set->length) return;
-    }
-  }
-  free((void*)set->nodes);
-  free(set);
-}
-
-void Set_freeNotElements(Set set) {
-  if (set == NULL) SET_INSTANCE_NULL;
-  set->freeEleFn = NULL;
-  Set_free(set);
-}
 
 bool Set_add(Set set, SetElement ele) {
   if (set == NULL) SET_INSTANCE_NULL;
@@ -116,28 +71,6 @@ bool Set_add(Set set, SetElement ele) {
   return true;
 }
 
-bool Set_remove(Set set, SetElement ele) {
-  if (set == NULL) SET_INSTANCE_NULL;
-  uint32_t idx;
-  uint32_t hash = hashIdx(set, ele, &idx);
-  Node* node = set->nodes[idx];
-  while (node != NULL) {
-    if (node->hash == hash && set->equalsEleFn(node->element, ele)) {
-      set->nodes[idx] = node->next;
-      if (set->freeEleFn != NULL) set->freeEleFn(node->element);
-      free(node);
-      set->count--;
-      return true;
-    }
-    node = node->next;
-  }
-  return false;
-}
-
-bool Set_isEmpty(Set set) {
-  return set->count == 0;
-}
-
 SetElement* Set_find(Set set, SetElement ele) {
   if (set == NULL) SET_INSTANCE_NULL;
   uint32_t idx;
@@ -150,27 +83,41 @@ SetElement* Set_find(Set set, SetElement ele) {
   return NULL;
 }
 
+void Set_free(Set set) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  // size_t count = 0;
+  for (int i = 0; i < set->capacity; ++i) {
+    Node* node = set->nodes[i];
+    while (node != NULL) {
+      if (set->freeEleFn != NULL) set->freeEleFn(node->element);
+      Node* prev = node;
+      node = node->next;
+      free(prev);
+      // if (++count >= set->length) return;
+    }
+  }
+  free((void*)set->nodes);
+  free(set);
+}
+
+void Set_freeLogger() {
+  if (_logger != NULL) {
+    destroyLogger(_logger);
+  }
+}
+
+void Set_freeNotElements(Set set) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  set->freeEleFn = NULL;
+  Set_free(set);
+}
+
 bool Set_Has(Set set, SetElement ele) {
   return Set_find(set, ele) != NULL;
 }
 
-void Set_union(Set dest, Set src) {
-  if (dest == NULL) SET_INSTANCE_NULL;
-  if (src == NULL) return;
-
-  for (int i = 0; i < src->capacity; ++i) {
-    Node* node = src->nodes[i];
-    Node* prev;
-    while (node != NULL) {
-      Set_add(dest, node->element);
-      prev = node;
-      node = node->next;
-      // `src` nodes should always be freed as they will be recreated in `dest` by `Set_add`.
-      free(prev);
-    }
-  }
-  free((void*)src->nodes);
-  free(src);
+void Set_initializeLogger() {
+  _logger = createLogger("SetLib");
 }
 
 void Set_intersection(Set left, Set right) {
@@ -188,6 +135,68 @@ void Set_intersection(Set left, Set right) {
       } else node = node->next;
     }
   }
+}
+
+bool Set_isEmpty(Set set) {
+  return set->count == 0;
+}
+
+Set Set_new(
+  Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_FreeEleFn freeEleFn, Set_ToStringEleFn toStringEleFn
+) {
+  if (hashEleFn == NULL || equalsEleFn == NULL) {
+    exitInvalidArgument(__func__, "Both `hashEleFn` and `equalsEleFn` are required arguments");
+  }
+  SetCDT* set = malloc(sizeof(SetCDT));
+  if (set == NULL) exitWithPerror(__func__, "malloc error");
+  set->capacity = INITIAL_CAPACITY;
+  set->nodes = (Node**)calloc(set->capacity, sizeof(Node*));
+  if (set->nodes == NULL) {
+    free(set);
+    exitWithPerror(__func__, "malloc error");
+  }
+  set->count = 0;
+  set->hashEleFn = hashEleFn;
+  set->equalsEleFn = equalsEleFn;
+  set->freeEleFn = freeEleFn;
+  set->toStringEleFn = toStringEleFn;
+  return set;
+}
+
+void Set_printInfo(Set set) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  printf("{ \n");
+  printf(
+    "  capacity:       %lu\n"
+    "  count:          %lu\n"
+    "  nodes:          %p\n"
+    "  hashEleFn:      %s\n"
+    "  equalsEleFn:    %s\n"
+    "  freeEleFn:      %s\n"
+    "  toStringEleFn:  %s\n",
+    set->capacity, set->count, (void*)set->nodes, set->hashEleFn ? "Assigned" : "NULL",
+    set->equalsEleFn ? "Assigned" : "NULL", set->freeEleFn ? "Assigned" : "NULL",
+    set->toStringEleFn ? "Assigned" : "NULL"
+  );
+  printf("}\n");
+}
+
+bool Set_remove(Set set, SetElement ele) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  uint32_t idx;
+  uint32_t hash = hashIdx(set, ele, &idx);
+  Node* node = set->nodes[idx];
+  while (node != NULL) {
+    if (node->hash == hash && set->equalsEleFn(node->element, ele)) {
+      set->nodes[idx] = node->next;
+      if (set->freeEleFn != NULL) set->freeEleFn(node->element);
+      free(node);
+      set->count--;
+      return true;
+    }
+    node = node->next;
+  }
+  return false;
 }
 
 void Set_subtraction(Set minuend, Set subtrahend) {
@@ -228,22 +237,32 @@ char* Set_toString(Set set) {
   return str;
 }
 
-void Set_printInfo(Set set) {
-  if (set == NULL) SET_INSTANCE_NULL;
-  printf("{ \n");
-  printf(
-    "  capacity:       %lu\n"
-    "  count:          %lu\n"
-    "  nodes:          %p\n"
-    "  hashEleFn:      %s\n"
-    "  equalsEleFn:    %s\n"
-    "  freeEleFn:      %s\n"
-    "  toStringEleFn:  %s\n",
-    set->capacity, set->count, (void*)set->nodes, set->hashEleFn ? "Assigned" : "NULL",
-    set->equalsEleFn ? "Assigned" : "NULL", set->freeEleFn ? "Assigned" : "NULL",
-    set->toStringEleFn ? "Assigned" : "NULL"
-  );
-  printf("}\n");
+void Set_union(Set dest, Set src) {
+  if (dest == NULL) SET_INSTANCE_NULL;
+  if (src == NULL) return;
+
+  for (int i = 0; i < src->capacity; ++i) {
+    Node* node = src->nodes[i];
+    Node* prev;
+    while (node != NULL) {
+      Set_add(dest, node->element);
+      prev = node;
+      node = node->next;
+      // `src` nodes should always be freed as they will be recreated in `dest` by `Set_add`.
+      free(prev);
+    }
+  }
+  free((void*)src->nodes);
+  free(src);
+}
+
+void SetIterator_free(SetIterator iter) {
+  free(iter);
+}
+
+bool SetIterator_hasNext(SetIterator iter) {
+  if (iter == NULL) SET_ITER_INSTANCE_NULL;
+  return iter->node != NULL;
 }
 
 SetIterator SetIterator_new(Set set) {
@@ -263,15 +282,6 @@ SetIterator SetIterator_new(Set set) {
   return iterator;
 }
 
-void SetIterator_free(SetIterator iter) {
-  free(iter);
-}
-
-bool SetIterator_hasNext(SetIterator iter) {
-  if (iter == NULL) SET_ITER_INSTANCE_NULL;
-  return iter->node != NULL;
-}
-
 SetElement* SetIterator_next(SetIterator iter) {
   if (iter == NULL) SET_ITER_INSTANCE_NULL;
   if (iter->node == NULL) return NULL;
@@ -289,10 +299,8 @@ SetElement* SetIterator_next(SetIterator iter) {
 
 //////////////////////////// Internal Functions ////////////////////////////
 
-uint32_t hashIdx(Set set, SetElement ele, uint32_t* idx) {
-  uint32_t hash = set->hashEleFn(ele);
-  *idx = hash % set->capacity;
-  return hash;
+void growBy(Set set, size_t extraCapacity) {
+  growTo(set, set->capacity + extraCapacity);
 }
 
 void growTo(Set set, size_t newCapacity) {
@@ -302,8 +310,10 @@ void growTo(Set set, size_t newCapacity) {
   set->nodes = aux;
 }
 
-void growBy(Set set, size_t extraCapacity) {
-  growTo(set, set->capacity + extraCapacity);
+uint32_t hashIdx(Set set, SetElement ele, uint32_t* idx) {
+  uint32_t hash = set->hashEleFn(ele);
+  *idx = hash % set->capacity;
+  return hash;
 }
 
 Node* Node_new(SetElement ele, uint32_t hash) {
@@ -321,13 +331,3 @@ Node* Node_new(SetElement ele, uint32_t hash) {
 //   free(prev);
 //   set->count--;
 // }
-
-void Set_initializeLogger() {
-  _logger = createLogger("SetLib");
-}
-
-void Set_freeLogger() {
-  if (_logger != NULL) {
-    destroyLogger(_logger);
-  }
-}
