@@ -1,0 +1,8 @@
+G = < sigma, N, P, S >
+sigma = { a, b, c }
+N = { S, A, B }
+P = { S -> b A | c, A -> a }
+
+T = ¬L(G)
+T2 = ¬¬L(G)
+T3 = ¬T

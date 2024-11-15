@@ -1,0 +1,9 @@
+G = < sigma, N, P, S >
+sigma = { a, b, c }
+N = { S, A, B }
+P = { S -> b A | c, A -> a }
+
+T = LR(L(G))
+T2 = LR(T)
+// Not sure if passing a grammar directly should be accepted as per our grammar (but I think it should)
+T3 = LR(G)

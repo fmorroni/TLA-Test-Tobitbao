@@ -14,7 +14,7 @@ STATUS=0
 echo "Compiler should accept..."
 echo ""
 
-for test in src/test/c/accept/*; do
+for test in $(find src/test/c/accept -maxdepth 2 -type f | sort); do
 	build/Compiler >/dev/null 2>&1 <"$test"
 	RESULT="$?"
 	if [ "$RESULT" == "0" ]; then
@@ -29,7 +29,7 @@ echo ""
 echo "Compiler should reject..."
 echo ""
 
-for test in src/test/c/reject/*; do
+for test in $(find src/test/c/reject -maxdepth 2 -type f | sort); do
 	build/Compiler >/dev/null 2>&1 <"$test"
 	RESULT="$?"
 	if [ "$RESULT" != "0" ]; then

@@ -1,0 +1,15 @@
+N = { S, A, B }
+sigma = { a, b, c }
+
+G1 = < sigma, N, P, S >
+P = { S -> b A | c, A -> a }
+
+G2 = < sigma, N, P2, S >
+P2 = { S -> c A | c, A -> b }
+
+G3 = < sigma, N, P2, S >
+P3 = { S -> a A | b, A -> c }
+
+T = L(G1) u L(G2)
+T2 = L(G1) u (L(G2) u L(G3))
+T3 = T u L(G1)
