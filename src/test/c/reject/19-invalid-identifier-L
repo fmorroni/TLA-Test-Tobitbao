@@ -1,0 +1,4 @@
+G = < sigama, N, LR, S >
+sigama = { a, b, c }
+N = { S, A, B }
+LR = { S -> b A | c, A -> a }

@@ -14,7 +14,7 @@ Language* Language_new(Id referenceId, LanguageIdType type) {
 LanguageExpression* SimpleLanguageExpression_new(Language* language) {
   logSyntacticAnalyzerAction(__FUNCTION__);
   LanguageExpression* langExpression = safeMalloc(sizeof(LanguageExpression));
-  langExpression->type = LANGUAGE;
+  langExpression->type = LANG_T;
   langExpression->language = language;
   return langExpression;
 }

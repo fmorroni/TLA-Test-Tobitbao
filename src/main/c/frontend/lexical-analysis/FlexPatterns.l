@@ -39,14 +39,14 @@ symbol_r [^[:space:],{}]+
 "L"                                 {
                                       BEGIN(LANGUAGE_DEFINITION);
                                       BeginLanguageDefinitionLexemeAction(createLexicalAnalyzerContext());
-                                      return TokenLexemeAction(createLexicalAnalyzerContext(), L);
+                                      return TokenLexemeAction(createLexicalAnalyzerContext(), LANGUAGE);
                                     }
 "u"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), UNION); }
 "n"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), INTERSECTION); }
 "-"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), SUBTRACTION); }
 "."                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), CONCAT); }
 "¬"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), COMPLEMENT); }
-"LR"[[:space:]]*"("                 { return TokenLexemeAction(createLexicalAnalyzerContext(), LANG_REVERSE_PARENTHESIS_OPEN); }
+"LR"                                { return TokenLexemeAction(createLexicalAnalyzerContext(), LANGUAGE_REVERSE); }
 ")"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), PARENTHESIS_CLOSE); }
 {id_r}                              { return IdLexemeAction(createLexicalAnalyzerContext()); }
 "("                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), PARENTHESIS_OPEN); }

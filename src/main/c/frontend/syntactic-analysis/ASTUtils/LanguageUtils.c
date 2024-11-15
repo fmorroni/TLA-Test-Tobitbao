@@ -27,18 +27,18 @@ void LanguageBinding_free(LanguageBinding* languageBinding) {
 void LanguageExpression_free(LanguageExpression* languageExpression) {
   logDebugging(_logger, "Executing destructor: %s", __func__);
   switch (languageExpression->type) {
-  case LANGUAGE:
+  case LANG_T:
     Language_free(languageExpression->language);
     break;
-  case LANG_UNION:
-  case LANG_INTERSEC:
-  case LANG_MINUS:
-  case LANG_CONCAT:
+  case LANG_UNION_T:
+  case LANG_INTERSEC_T:
+  case LANG_MINUS_T:
+  case LANG_CONCAT_T:
     LanguageExpression_free(languageExpression->leftLanguageExpression);
     LanguageExpression_free(languageExpression->rightLanguageExpression);
     break;
-  case LANG_REVERSE:
-  case LANG_COMPLEMENT:
+  case LANG_REVERSE_T:
+  case LANG_COMPLEMENT_T:
     LanguageExpression_free(languageExpression->unaryLanguageExpression);
     break;
   default:
@@ -55,17 +55,17 @@ void Language_free(Language* language) {
 // LANG_UNION, LANG_INTERSEC, LANG_MINUS, LANG_CONCAT, LANG_REVERSE
 char LanguageExpressionType_toString(LanguageExpressionType type) {
   switch (type) {
-  case LANG_UNION:
+  case LANG_UNION_T:
     return 'u';
-  case LANG_INTERSEC:
+  case LANG_INTERSEC_T:
     return 'n';
-  case LANG_CONCAT:
+  case LANG_CONCAT_T:
     return '.';
-  case LANG_MINUS:
+  case LANG_MINUS_T:
     return '-';
-  case LANG_REVERSE:
+  case LANG_REVERSE_T:
     return 'R';
-  case LANG_COMPLEMENT:
+  case LANG_COMPLEMENT_T:
     return 'N';
   default:
     return '?';
@@ -73,13 +73,13 @@ char LanguageExpressionType_toString(LanguageExpressionType type) {
 }
 
 char* LanguageExpression_toString(LanguageExpression* languageExpression) {
-  if (languageExpression->type == LANGUAGE) {
+  if (languageExpression->type == LANG_T) {
     if (languageExpression->language->type == GRAMMAR_ID) {
       return safeAsprintf("L(" COLORIZE_ID("%s") ")", languageExpression->language->id);
     }
     return safeAsprintf("(" COLORIZE_ID("%s") ")", languageExpression->language->id);
   }
-  if (languageExpression->type == LANG_COMPLEMENT || languageExpression->type == LANG_REVERSE) {
+  if (languageExpression->type == LANG_COMPLEMENT_T || languageExpression->type == LANG_REVERSE_T) {
     char* unaryExpression = LanguageExpression_toString(languageExpression->unaryLanguageExpression);
     char languageExpressionType = LanguageExpressionType_toString(languageExpression->type);
     char* str = safeAsprintf("%c(%s)", languageExpressionType, unaryExpression);

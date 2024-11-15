@@ -55,46 +55,46 @@
 }
 
 /** Terminals. */
-%token <id> ID
-%token <token> EQUALS
-%token <token> ANGLE_BRACKET_OPEN
 %token <token> ANGLE_BRACKET_CLOSE
-%token <token> BRACES_OPEN
+%token <token> ANGLE_BRACKET_OPEN
 %token <token> BRACES_CLOSE
-%token <token> COMMA
-%token <token> RIGHT_ARROW
-%token <token> LAMBDA
-%token <token> PIPE
-%token <token> UNION
-%token <token> INTERSECTION
-%token <token> SUBTRACTION
+%token <token> BRACES_OPEN
 %token <token> CONCAT
+%token <token> COMMA
 %token <token> COMPLEMENT
-%token <token> LANG_REVERSE_PARENTHESIS_OPEN
-%token <symbol> SYMBOL
-%token <token> L
-%token <token> PARENTHESIS_OPEN
+%token <token> EQUALS
+%token <id> ID
+%token <token> INTERSECTION
+%token <token> LANGUAGE
+%token <token> LANGUAGE_REVERSE
+%token <token> LAMBDA
 %token <token> PARENTHESIS_CLOSE
+%token <token> PARENTHESIS_OPEN
+%token <token> PIPE
+%token <token> RIGHT_ARROW
+%token <token> SUBTRACTION
+%token <symbol> SYMBOL
+%token <token> UNION
 
 %token <token> UNKNOWN
 
 /** Non-terminals. */
-%type <program> program
-%type <sentences> sentences
-%type <sentence> sentence
 %type <grammarDefinition> grammarDefinition
-%type <symbolSetBinding> symbolSetBinding
-%type <symbolSet> symbolSet
-%type <symbols> symbols
-%type <productionSetBinding> productionSetBinding
-%type <productionSet> productionSet
-%type <productions> productions
-%type <production> production
-%type <productionRhsRules> productionRhsRules
-%type <productionRhsRule> productionRhsRule
+%type <language> language
 %type <languageBinding> languageBinding
 %type <languageExpression> languageExpression
-%type <language> language
+%type <production> production
+%type <productionRhsRule> productionRhsRule
+%type <productionRhsRules> productionRhsRules
+%type <productionSet> productionSet
+%type <productionSetBinding> productionSetBinding
+%type <productions> productions
+%type <program> program
+%type <sentence> sentence
+%type <sentences> sentences
+%type <symbolSet> symbolSet
+%type <symbolSetBinding> symbolSetBinding
+%type <symbols> symbols
 
 /**
  * Destructors. This functions are executed after the parsing ends, so if the
@@ -164,7 +164,7 @@ symbolSet: BRACES_OPEN symbols[values] BRACES_CLOSE             { $$ = $values; 
   | symbolSet[left] UNION symbolSet[right]                      { $$ = SymbolSet_union($left, $right); }
   | symbolSet[left] INTERSECTION symbolSet[right]               { $$ = SymbolSet_intersection($left, $right); }
   | symbolSet[left] SUBTRACTION symbolSet[right]                { $$ = SymbolSet_subtraction($left, $right); }
-  | PARENTHESIS_OPEN symbolSet[sSet] PARENTHESIS_CLOSE       { $$ = $sSet; }
+  | PARENTHESIS_OPEN symbolSet[sSet] PARENTHESIS_CLOSE          { $$ = $sSet; }
   ;
 
 symbols: SYMBOL                                                 { $$ = SymbolSet_new($1); }
@@ -200,16 +200,16 @@ productionRhsRule: SYMBOL SYMBOL                                { $$ = Productio
 languageBinding: ID[languageID] EQUALS languageExpression[lang]             { $$ = LanguageBinding_new($languageID, $lang); } 
 
 languageExpression: language                                                { $$ = SimpleLanguageExpression_new($1); }
- | languageExpression[left] UNION languageExpression[right]                 { $$ = ComplexLanguageExpression_new($left, $right, LANG_UNION); }
- | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSEC); }
- | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_MINUS); }
- | languageExpression[left] CONCAT languageExpression[right]                { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCAT); }
- | LANG_REVERSE_PARENTHESIS_OPEN languageExpression[lang] PARENTHESIS_CLOSE { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE); }
- | COMPLEMENT languageExpression[lang]                                      { $$ = UnaryTypeLanguageExpression_new($lang, LANG_COMPLEMENT); }
+ | languageExpression[left] UNION languageExpression[right]                 { $$ = ComplexLanguageExpression_new($left, $right, LANG_UNION_T); }
+ | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSEC_T); }
+ | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_MINUS_T); }
+ | languageExpression[left] CONCAT languageExpression[right]                { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCAT_T); }
+ | LANGUAGE_REVERSE PARENTHESIS_OPEN languageExpression[lang] PARENTHESIS_CLOSE { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE_T); }
+ | COMPLEMENT languageExpression[lang]                                      { $$ = UnaryTypeLanguageExpression_new($lang, LANG_COMPLEMENT_T); }
  | PARENTHESIS_OPEN languageExpression[lang] PARENTHESIS_CLOSE              { $$ = $lang; }
  ;
 
-language: L PARENTHESIS_OPEN ID[grammarID] PARENTHESIS_CLOSE                { $$ = Language_new($grammarID, GRAMMAR_ID); }
+language: LANGUAGE PARENTHESIS_OPEN ID[grammarID] PARENTHESIS_CLOSE                { $$ = Language_new($grammarID, GRAMMAR_ID); }
  | ID[id]                                                                   { $$ = Language_new($id, LANGUAGE_ID); }
  ;
  
