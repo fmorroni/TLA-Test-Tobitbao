@@ -61,7 +61,14 @@ add_executable(Compiler
 	src/main/c/frontend/lexical-analysis/FlexScanner.c
 	src/main/c/frontend/lexical-analysis/LexicalAnalyzerContext.c
 	src/main/c/frontend/syntactic-analysis/AbstractSyntaxTree.c
-	src/main/c/frontend/syntactic-analysis/BisonActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/ActionsLogger.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/GrammarActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/LanguageActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/ProductionActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/ProductionRhsActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/ProgramActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/SentenceActions.c
+  src/main/c/frontend/syntactic-analysis/BisonActions/SymbolActions.c
 	src/main/c/frontend/syntactic-analysis/BisonParser.c
 	src/main/c/frontend/syntactic-analysis/SyntacticAnalyzer.c
   src/main/c/frontend/syntactic-analysis/ASTUtils/GrammarUtils.c

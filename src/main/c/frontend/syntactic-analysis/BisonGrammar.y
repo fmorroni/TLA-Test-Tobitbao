@@ -2,9 +2,16 @@
 
 // C file dependencies
 
-#include "BisonActions.h"
-#include "./SyntacticAnalyzer.h"
-#include "./AbstractSyntaxTree.h"
+#include "BisonActions/ActionsLogger.h"
+#include "BisonActions/GrammarActions.h"
+#include "BisonActions/LanguageActions.h"
+#include "BisonActions/ProductionActions.h"
+#include "BisonActions/ProductionRhsActions.h"
+#include "BisonActions/ProgramActions.h"
+#include "BisonActions/SentenceActions.h"
+#include "BisonActions/SymbolActions.h"
+#include "SyntacticAnalyzer.h"
+#include "AbstractSyntaxTree.h"
 #include "../../shared/Array.h"
 #include <stdio.h>
 
@@ -14,7 +21,7 @@
 
 // Header file dependencies
 
-#include "./AbstractSyntaxTree.h"
+#include "AbstractSyntaxTree.h"
 #include "../../shared/Type.h"
 
 }

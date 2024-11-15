@@ -3,7 +3,7 @@
 #include "frontend/lexical-analysis/FlexActions.h"
 #include "frontend/syntactic-analysis/ASTUtils/SentenceUtils.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
-#include "frontend/syntactic-analysis/BisonActions.h"
+#include "frontend/syntactic-analysis/BisonActions/ActionsLogger.h"
 #include "frontend/syntactic-analysis/SyntacticAnalyzer.h"
 #include "shared/Array.h"
 #include "shared/CompilerState.h"
