@@ -201,9 +201,9 @@ languageBinding: ID[languageID] EQUALS languageExpression[lang]             { $$
 
 languageExpression: language                                                { $$ = SimpleLanguageExpression_new($1); }
  | languageExpression[left] UNION languageExpression[right]                 { $$ = ComplexLanguageExpression_new($left, $right, LANG_UNION_T); }
- | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSEC_T); }
- | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_MINUS_T); }
- | languageExpression[left] CONCAT languageExpression[right]                { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCAT_T); }
+ | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
+ | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
+ | languageExpression[left] CONCAT languageExpression[right]                { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
  | LANGUAGE_REVERSE PARENTHESIS_OPEN 
      languageExpression[lang]
    PARENTHESIS_CLOSE                                                        { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE_T); }

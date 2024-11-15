@@ -33,9 +33,9 @@ void LanguageExpression_free(LanguageExpression* languageExpression) {
     Language_free(languageExpression->language);
     break;
   case LANG_UNION_T:
-  case LANG_INTERSEC_T:
-  case LANG_MINUS_T:
-  case LANG_CONCAT_T:
+  case LANG_INTERSECTION_T:
+  case LANG_SUBTRACTION_T:
+  case LANG_CONCATENATION_T:
     LanguageExpression_free(languageExpression->leftLanguageExpression);
     LanguageExpression_free(languageExpression->rightLanguageExpression);
     break;
@@ -59,11 +59,11 @@ char _languageExpressionType_toChar(LanguageExpressionType type) {
   switch (type) {
   case LANG_UNION_T:
     return 'u';
-  case LANG_INTERSEC_T:
+  case LANG_INTERSECTION_T:
     return 'n';
-  case LANG_CONCAT_T:
+  case LANG_CONCATENATION_T:
     return '.';
-  case LANG_MINUS_T:
+  case LANG_SUBTRACTION_T:
     return '-';
   case LANG_REVERSE_T:
     return 'R';
