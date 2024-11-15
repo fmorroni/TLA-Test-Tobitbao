@@ -81,28 +81,6 @@ struct SymbolSetBinding {
   SymbolSet symbols;
 };
 
-struct LanguageBinding {
-  Id id;
-  LanguageExpression* LanguageExpression;
-};
-
-struct LanguageExpression {
-  union {
-    Language* language;
-    LanguageExpression* unaryLanguageExpression;
-    struct {
-      LanguageExpression* leftLanguageExpression;
-      LanguageExpression* rightLanguageExpression;
-    };
-  };
-  LanguageExpressionType type;
-};
-
-struct Language {
-  LanguageIdType type;
-  Id id;
-};
-
 struct ProductionSetBinding {
   Id id;
   ProductionSet productions;
@@ -132,6 +110,28 @@ struct ProductionRhsRule {
     Symbol symbol;
   };
   ProductionRhsRuleType type;
+};
+
+struct LanguageBinding {
+  Id id;
+  LanguageExpression* LanguageExpression;
+};
+
+struct LanguageExpression {
+  union {
+    Language* language;
+    LanguageExpression* unaryLanguageExpression;
+    struct {
+      LanguageExpression* leftLanguageExpression;
+      LanguageExpression* rightLanguageExpression;
+    };
+  };
+  LanguageExpressionType type;
+};
+
+struct Language {
+  LanguageIdType type;
+  Id id;
 };
 
 /**
