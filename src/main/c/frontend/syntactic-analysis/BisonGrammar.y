@@ -204,12 +204,14 @@ languageExpression: language                                                { $$
  | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSEC_T); }
  | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_MINUS_T); }
  | languageExpression[left] CONCAT languageExpression[right]                { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCAT_T); }
- | LANGUAGE_REVERSE PARENTHESIS_OPEN languageExpression[lang] PARENTHESIS_CLOSE { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE_T); }
+ | LANGUAGE_REVERSE PARENTHESIS_OPEN 
+     languageExpression[lang]
+   PARENTHESIS_CLOSE                                                        { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE_T); }
  | COMPLEMENT languageExpression[lang]                                      { $$ = UnaryTypeLanguageExpression_new($lang, LANG_COMPLEMENT_T); }
  | PARENTHESIS_OPEN languageExpression[lang] PARENTHESIS_CLOSE              { $$ = $lang; }
  ;
 
-language: LANGUAGE PARENTHESIS_OPEN ID[grammarID] PARENTHESIS_CLOSE                { $$ = Language_new($grammarID, GRAMMAR_ID); }
+language: LANGUAGE PARENTHESIS_OPEN ID[grammarID] PARENTHESIS_CLOSE         { $$ = Language_new($grammarID, GRAMMAR_ID); }
  | ID[id]                                                                   { $$ = Language_new($id, LANGUAGE_ID); }
  ;
  
