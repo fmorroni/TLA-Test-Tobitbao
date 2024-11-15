@@ -17,6 +17,8 @@ void shutdownLanguageUtilsModule() {
   }
 }
 
+char _languageExpressionType_toChar(LanguageExpressionType type);
+
 void LanguageBinding_free(LanguageBinding* languageBinding) {
   logDebugging(_logger, "Executing destructor: %s", __func__);
   LanguageExpression_free(languageBinding->LanguageExpression);
@@ -53,7 +55,7 @@ void Language_free(Language* language) {
 }
 
 // LANG_UNION, LANG_INTERSEC, LANG_MINUS, LANG_CONCAT, LANG_REVERSE
-char LanguageExpressionType_toString(LanguageExpressionType type) {
+char _languageExpressionType_toChar(LanguageExpressionType type) {
   switch (type) {
   case LANG_UNION_T:
     return 'u';
@@ -81,7 +83,7 @@ char* LanguageExpression_toString(LanguageExpression* languageExpression) {
   }
   if (languageExpression->type == LANG_COMPLEMENT_T || languageExpression->type == LANG_REVERSE_T) {
     char* unaryExpression = LanguageExpression_toString(languageExpression->unaryLanguageExpression);
-    char languageExpressionType = LanguageExpressionType_toString(languageExpression->type);
+    char languageExpressionType = _languageExpressionType_toChar(languageExpression->type);
     char* str = safeAsprintf("%c(%s)", languageExpressionType, unaryExpression);
     free(unaryExpression);
     return str;
@@ -89,7 +91,7 @@ char* LanguageExpression_toString(LanguageExpression* languageExpression) {
 
   char* leftExpression = LanguageExpression_toString(languageExpression->leftLanguageExpression);
   char* rightExpression = LanguageExpression_toString(languageExpression->rightLanguageExpression);
-  char languageExpressionType = LanguageExpressionType_toString(languageExpression->type);
+  char languageExpressionType = _languageExpressionType_toChar(languageExpression->type);
   char* str = safeAsprintf("%s %c %s", leftExpression, languageExpressionType, rightExpression);
   free(leftExpression);
   free(rightExpression);
