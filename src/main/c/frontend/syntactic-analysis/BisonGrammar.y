@@ -59,7 +59,7 @@
 %token <token> ANGLE_BRACKET_OPEN
 %token <token> BRACES_CLOSE
 %token <token> BRACES_OPEN
-%token <token> CONCAT
+%token <token> CONCATENATION
 %token <token> COMMA
 %token <token> COMPLEMENT
 %token <token> EQUALS
@@ -124,7 +124,7 @@ actually needed.
  */
 %left UNION INTERSECTION
 %left SUBTRACTION
-%left CONCAT
+%left CONCATENATION
 %left COMPLEMENT
 
 
@@ -203,7 +203,7 @@ languageExpression: language                                                { $$
  | languageExpression[left] UNION languageExpression[right]                 { $$ = ComplexLanguageExpression_new($left, $right, LANG_UNION_T); }
  | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
  | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
- | languageExpression[left] CONCAT languageExpression[right]                { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
+ | languageExpression[left] CONCATENATION languageExpression[right]         { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
  | LANGUAGE_REVERSE PARENTHESIS_OPEN 
      languageExpression[lang]
    PARENTHESIS_CLOSE                                                        { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE_T); }
