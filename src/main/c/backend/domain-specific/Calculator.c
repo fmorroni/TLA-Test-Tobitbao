@@ -1,8 +1,7 @@
 #include "Calculator.h"
-// #include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "../../shared/Logger.h"
-#include "../../shared/Type.h"
 #include <limits.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 /* MODULE INTERNAL STATE */
@@ -70,7 +69,7 @@ ComputationResult add(const int leftAddend, const int rightAddend) {
 
 ComputationResult divide(const int dividend, const int divisor) {
   const int sign = dividend < 0 ? -1 : +1;
-  const boolean divisionByZero = divisor == 0 ? true : false;
+  const bool divisionByZero = divisor == 0 ? true : false;
   if (divisionByZero) {
     logError(_logger, "The divisor cannot be zero (the computation was %d/%d).", dividend, divisor);
   }

@@ -1,11 +1,11 @@
 #include "Environment.h"
-#include "Type.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
 /* PUBLIC FUNCTIONS */
 
-boolean getBooleanOrDefault(const char* name, const boolean defaultValue) {
+bool getBooleanOrDefault(const char* name, const bool defaultValue) {
   const char* value = getStringOrDefault(name, NULL);
   if (value == NULL) {
     return defaultValue;

@@ -1,17 +1,16 @@
-#include "FlexActions.h"
 #include "../../shared/Environment.h"
 #include "../../shared/Logger.h"
 #include "../../shared/String.h"
 #include "../../shared/Type.h"
 #include "../syntactic-analysis/BisonParser.h"
 #include "LexicalAnalyzerContext.h"
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 /* MODULE INTERNAL STATE */
 
 static Logger* _logger = NULL;
-static boolean _logIgnoredLexemes = true;
+static bool _logIgnoredLexemes = true;
 
 void initializeFlexActionsModule() {
   _logIgnoredLexemes = getBooleanOrDefault("LOG_IGNORED_LEXEMES", _logIgnoredLexemes);

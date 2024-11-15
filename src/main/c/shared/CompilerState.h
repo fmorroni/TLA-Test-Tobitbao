@@ -1,7 +1,7 @@
 #ifndef COMPILER_STATE_HEADER
 #define COMPILER_STATE_HEADER
 
-#include "Type.h"
+#include <stdbool.h>
 
 /**
  * The general status of a compilation.
@@ -17,7 +17,7 @@ typedef struct {
   void* abstractSyntaxtTree;
 
   // A flag that indicates the current state of the compilation so far.
-  boolean succeed;
+  bool succeed;
 
   // TODO: Add an stack to handle nested scopes.
   // TODO: Add a symbol table.

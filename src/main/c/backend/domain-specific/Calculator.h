@@ -7,8 +7,8 @@
  * domain-specific models or DTOs (Data Transfer Objects).
  */
 // #include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
-#include "../../shared/Type.h"
 #include <limits.h>
+#include <stdbool.h>
 
 /** Initialize module's internal state. */
 void initializeCalculatorModule();
@@ -21,7 +21,7 @@ void shutdownCalculatorModule();
  * true.
  */
 typedef struct {
-  boolean succeed;
+  bool succeed;
   int value;
 } ComputationResult;
 
