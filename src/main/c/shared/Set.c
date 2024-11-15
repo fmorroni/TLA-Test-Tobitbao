@@ -39,7 +39,7 @@ typedef struct SetIteratorCDT {
   size_t capacity;
 } SetIteratorCDT;
 
-enum { INITIAL_CAPACITY = 100 };
+#define INITIAL_CAPACITY 100
 
 static void growBy(Set set, size_t extraCapacity);
 static void growTo(Set set, size_t newCapacity);

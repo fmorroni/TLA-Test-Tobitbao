@@ -16,6 +16,7 @@ Checks:                       '*,
                                 -cppcoreguidelines-*,
                                 -clang-diagnostic-unused-command-line-argument,
                                 -concurrency-mt-unsafe,
+                                -modernize-macro-to-enum,
                               '
 HeaderFilterRegex:            '.*'
 FormatStyle:                  'file'

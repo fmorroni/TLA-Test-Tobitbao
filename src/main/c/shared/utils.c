@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum { CALLSTACK_LEN = 128, EXTRA_MSG_LEN = 20 };
+#define CALLSTACK_LEN 128
+#define EXTRA_MSG_LEN 20
 
 void exitInvalidArgument(const char* functionName, const char* msg) {
   exitWithErrno(EINVAL, functionName, msg);
