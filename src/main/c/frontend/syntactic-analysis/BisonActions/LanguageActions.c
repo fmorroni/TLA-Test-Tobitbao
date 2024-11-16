@@ -1,41 +1,58 @@
+#include "../../../shared/Logger.h"
 #include "../../../shared/utils.h"
+#include "../ASTUtils/LanguageUtils.h"
 #include "../AbstractSyntaxTree.h"
 #include "ActionsLogger.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-Language* Language_new(Id referenceId, LanguageIdType type) {
-  logSyntacticAnalyzerAction(__FUNCTION__);
-  Language* language = safeMalloc(sizeof(Language));
-  language->id = referenceId;
-  language->type = type;
-  return language;
-}
+extern Logger* bisonActionsLogger;
 
-LanguageExpression* SimpleLanguageExpression_new(Language* language) {
-  logSyntacticAnalyzerAction(__FUNCTION__);
+LanguageExpression* SimpleLanguageExpression_new(Id id, LanguageExpressionType type) {
   LanguageExpression* langExpression = safeMalloc(sizeof(LanguageExpression));
-  langExpression->type = LANG_T;
-  langExpression->language = language;
-  return langExpression;
-}
-
-LanguageExpression* UnaryTypeLanguageExpression_new(LanguageExpression* lang, LanguageExpressionType type) {
-  logSyntacticAnalyzerAction(__func__);
-  LanguageExpression* langExpression = safeMalloc(sizeof(LanguageExpression));
+  switch (type) {
+  case LANG_ID_T:
+    logDebugging(bisonActionsLogger, "%s: %s", __func__, id.id);
+    langExpression->languageId = id;
+    break;
+  case LANG_OF_GRAMMAR_T:
+    logDebugging(bisonActionsLogger, "%s: L(%s)", __func__, id.id);
+    langExpression->grammarId = id;
+    break;
+  default:
+    logError(
+      bisonActionsLogger,
+      "Invalid language expression type. "
+      "Should be %d or %d, was %d.",
+      LANG_ID_T, LANG_OF_GRAMMAR_T, type
+    );
+    free(langExpression);
+    return NULL;
+  }
   langExpression->type = type;
-  langExpression->unaryLanguageExpression = lang;
   return langExpression;
 }
 
-LanguageExpression* ComplexLanguageExpression_new(
-  LanguageExpression* leftLang, LanguageExpression* rightLang, LanguageExpressionType type
-) {
-  logSyntacticAnalyzerAction(__FUNCTION__);
-  LanguageExpression* langExpression = safeMalloc(sizeof(LanguageExpression));
-  langExpression->type = type;
-  langExpression->leftLanguageExpression = leftLang;
-  langExpression->rightLanguageExpression = rightLang;
-  return langExpression;
+LanguageExpression* UnaryLanguageExpression_new(LanguageExpression* innerExpr, LanguageExpressionType type) {
+  LanguageExpression* outerExpr = safeMalloc(sizeof(LanguageExpression));
+  outerExpr->type = type;
+  outerExpr->unaryExpression = innerExpr;
+  char* exprStr = LanguageExpression_toString(outerExpr);
+  logDebugging(bisonActionsLogger, "%s: %s", __func__, exprStr);
+  free(exprStr);
+  return outerExpr;
+}
+
+LanguageExpression*
+BinaryLanguageExpression_new(LanguageExpression* leftExpr, LanguageExpression* rightExpr, LanguageExpressionType type) {
+  LanguageExpression* outerExpr = safeMalloc(sizeof(LanguageExpression));
+  outerExpr->type = type;
+  outerExpr->leftExpression = leftExpr;
+  outerExpr->rightExpression = rightExpr;
+  char* exprStr = LanguageExpression_toString(outerExpr);
+  logDebugging(bisonActionsLogger, "%s: %s", __func__, exprStr);
+  free(exprStr);
+  return outerExpr;
 }
 
 LanguageBinding* LanguageBinding_new(Id langId, LanguageExpression* langExpression) {

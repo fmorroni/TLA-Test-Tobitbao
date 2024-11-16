@@ -46,10 +46,12 @@ symbol_r [^[:space:],{}]+
 "-"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), SUBTRACTION); }
 "."                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), CONCATENATION); }
 "¬"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), COMPLEMENT); }
-"LR"                                { return TokenLexemeAction(createLexicalAnalyzerContext(), LANGUAGE_REVERSE); }
+"^"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), CARET); }
+"R"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), REVERSE); }
 ")"                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), PARENTHESIS_CLOSE); }
 {id_r}                              { return IdLexemeAction(createLexicalAnalyzerContext()); }
 "("                                 { return TokenLexemeAction(createLexicalAnalyzerContext(), PARENTHESIS_OPEN); }
+[[:space:]]+                        { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 "/*"                                { BEGIN(MULTILINE_COMMENT); BeginMultilineCommentLexemeAction(createLexicalAnalyzerContext()); }
 <MULTILINE_COMMENT>"*/"             { EndMultilineCommentLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
@@ -104,18 +106,21 @@ symbol_r [^[:space:],{}]+
 <SET_DEFINITION>[[:space:]]+        { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 <SET_DEFINITION>.                   { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
-[[:space:]]+                        { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-.                                   { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
-
-
 <LANGUAGE_DEFINITION>"("            { return TokenLexemeAction(createLexicalAnalyzerContext(), PARENTHESIS_OPEN);  }
-<LANGUAGE_DEFINITION>{id_r}         { return IdLexemeAction(createLexicalAnalyzerContext()); }
 <LANGUAGE_DEFINITION>")"            { 
                                       EndLanguageDefinitionLexemeAction(createLexicalAnalyzerContext());
                                       Token t = TokenLexemeAction(createLexicalAnalyzerContext(), PARENTHESIS_CLOSE);
                                       BEGIN(INITIAL);
                                       return t;
                                     }
+<LANGUAGE_DEFINITION>{id_r}         { return IdLexemeAction(createLexicalAnalyzerContext()); }
+<LANGUAGE_DEFINITION>[[:space:]]+   { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
+<LANGUAGE_DEFINITION>.              { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
+
+%{
+// Note: Should go last as to not intervene with other context beginings.
+%}
+.                                   { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
 %%
 

@@ -51,36 +51,35 @@
   ProductionRhsRule* productionRhsRule;
   LanguageBinding* languageBinding;
   LanguageExpression* languageExpression;
-  Language* language;
 }
 
 /** Terminals. */
+%token <id>    ID
+%token <symbol> SYMBOL
 %token <token> ANGLE_BRACKET_CLOSE
 %token <token> ANGLE_BRACKET_OPEN
 %token <token> BRACES_CLOSE
 %token <token> BRACES_OPEN
+%token <token> CARET
 %token <token> CONCATENATION
 %token <token> COMMA
 %token <token> COMPLEMENT
 %token <token> EQUALS
-%token <id> ID
 %token <token> INTERSECTION
 %token <token> LANGUAGE
-%token <token> LANGUAGE_REVERSE
+%token <token> REVERSE
 %token <token> LAMBDA
 %token <token> PARENTHESIS_CLOSE
 %token <token> PARENTHESIS_OPEN
 %token <token> PIPE
 %token <token> RIGHT_ARROW
 %token <token> SUBTRACTION
-%token <symbol> SYMBOL
 %token <token> UNION
 
 %token <token> UNKNOWN
 
 /** Non-terminals. */
 %type <grammarDefinition> grammarDefinition
-%type <language> language
 %type <languageBinding> languageBinding
 %type <languageExpression> languageExpression
 %type <production> production
@@ -126,6 +125,7 @@ actually needed.
 %left SUBTRACTION
 %left CONCATENATION
 %left COMPLEMENT
+%left CARET
 
 
 %%
@@ -199,20 +199,15 @@ productionRhsRule: SYMBOL SYMBOL                                { $$ = Productio
 
 languageBinding: ID[languageID] EQUALS languageExpression[lang]             { $$ = LanguageBinding_new($languageID, $lang); } 
 
-languageExpression: language                                                { $$ = SimpleLanguageExpression_new($1); }
- | languageExpression[left] UNION languageExpression[right]                 { $$ = ComplexLanguageExpression_new($left, $right, LANG_UNION_T); }
- | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = ComplexLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
- | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = ComplexLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
- | languageExpression[left] CONCATENATION languageExpression[right]         { $$ = ComplexLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
- | LANGUAGE_REVERSE PARENTHESIS_OPEN 
-     languageExpression[lang]
-   PARENTHESIS_CLOSE                                                        { $$ = UnaryTypeLanguageExpression_new($lang, LANG_REVERSE_T); }
- | COMPLEMENT languageExpression[lang]                                      { $$ = UnaryTypeLanguageExpression_new($lang, LANG_COMPLEMENT_T); }
- | PARENTHESIS_OPEN languageExpression[lang] PARENTHESIS_CLOSE              { $$ = $lang; }
+languageExpression: LANGUAGE PARENTHESIS_OPEN
+     ID[grammarID]
+   PARENTHESIS_CLOSE                                                        { $$ = SimpleLanguageExpression_new($grammarID, LANG_OF_GRAMMAR_T); }
+ | ID[langId]                                                               { $$ = SimpleLanguageExpression_new($langId, LANG_ID_T); }
+ | languageExpression[left] UNION languageExpression[right]                 { $$ = BinaryLanguageExpression_new($left, $right, LANG_UNION_T); }
+ | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = BinaryLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
+ | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = BinaryLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
+ | languageExpression[left] CONCATENATION languageExpression[right]         { $$ = BinaryLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
+ | languageExpression[expr] CARET REVERSE                                   { $$ = UnaryLanguageExpression_new($expr, LANG_REVERSE_T); }
+ | COMPLEMENT languageExpression[expr]                                      { $$ = UnaryLanguageExpression_new($expr, LANG_COMPLEMENT_T); }
+ | PARENTHESIS_OPEN languageExpression[expr] PARENTHESIS_CLOSE              { $$ = $expr; }
  ;
-
-language: LANGUAGE PARENTHESIS_OPEN ID[grammarID] PARENTHESIS_CLOSE         { $$ = Language_new($grammarID, GRAMMAR_ID); }
- | ID[id]                                                                   { $$ = Language_new($id, LANGUAGE_ID); }
- ;
- 
-%%

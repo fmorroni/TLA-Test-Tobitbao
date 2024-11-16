@@ -20,7 +20,8 @@ typedef enum { GRAMMAR_DEFINITION, SYMBOL_SET, PRODUCTION_SET, LANGUAGE_SENTENCE
 typedef enum { SYMBOL_SYMBOL_T, SYMBOL_T, LAMBDA_T } ProductionRhsRuleType;
 
 typedef enum {
-  LANG_T,
+  LANG_ID_T,
+  LANG_OF_GRAMMAR_T,
   LANG_UNION_T,
   LANG_INTERSECTION_T,
   LANG_SUBTRACTION_T,
@@ -28,8 +29,6 @@ typedef enum {
   LANG_REVERSE_T,
   LANG_COMPLEMENT_T
 } LanguageExpressionType;
-
-typedef enum { GRAMMAR_ID, LANGUAGE_ID } LanguageIdType;
 
 /**
  * This typedefs allows self-referencing types.
@@ -47,7 +46,6 @@ typedef struct Production Production;
 typedef struct ProductionRhsRule ProductionRhsRule;
 typedef struct LanguageBinding LanguageBinding;
 typedef struct LanguageExpression LanguageExpression;
-typedef struct Language Language;
 
 typedef Array SentenceArray;
 typedef Set SymbolSet;
@@ -119,19 +117,15 @@ struct LanguageBinding {
 
 struct LanguageExpression {
   union {
-    Language* language;
-    LanguageExpression* unaryLanguageExpression;
+    Id languageId;
+    Id grammarId;
+    LanguageExpression* unaryExpression;
     struct {
-      LanguageExpression* leftLanguageExpression;
-      LanguageExpression* rightLanguageExpression;
+      LanguageExpression* leftExpression;
+      LanguageExpression* rightExpression;
     };
   };
   LanguageExpressionType type;
-};
-
-struct Language {
-  LanguageIdType type;
-  Id id;
 };
 
 /**
