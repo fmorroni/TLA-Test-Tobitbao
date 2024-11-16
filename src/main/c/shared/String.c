@@ -111,7 +111,7 @@ char* concatenate(const unsigned int count, ...) {
 
 char* escape(const char* string) {
   unsigned int length = 1;
-  for (unsigned int k = 0; 0 < string[k]; ++k) {
+  for (unsigned int k = 0; string[k] != 0; ++k) {
     if (iscntrl(string[k])) {
       length += strlen(_controlCharacterToEscapedString(string[k]));
     } else {
@@ -120,7 +120,7 @@ char* escape(const char* string) {
   }
   char* escapedString = safeCalloc(length, sizeof(char));
   char charToString[2] = {0, 0};
-  for (unsigned int k = 0; 0 < string[k]; ++k) {
+  for (unsigned int k = 0; string[k] != 0; ++k) {
     if (iscntrl(string[k])) {
       strlcat(escapedString, _controlCharacterToEscapedString(string[k]), length);
     } else {
