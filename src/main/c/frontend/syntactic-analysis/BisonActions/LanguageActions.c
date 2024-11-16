@@ -58,7 +58,7 @@ BinaryLanguageExpression_new(LanguageExpression* leftExpr, LanguageExpression* r
 LanguageBinding* LanguageBinding_new(Id langId, LanguageExpression* langExpression) {
   LanguageBinding* languageBinding = safeMalloc(sizeof(LanguageBinding));
   languageBinding->id = langId;
-  languageBinding->LanguageExpression = langExpression;
+  languageBinding->languageExpression = langExpression;
   return languageBinding;
 }
 

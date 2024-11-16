@@ -112,7 +112,7 @@ struct ProductionRhsRule {
 
 struct LanguageBinding {
   Id id;
-  LanguageExpression* LanguageExpression;
+  LanguageExpression* languageExpression;
 };
 
 struct LanguageExpression {

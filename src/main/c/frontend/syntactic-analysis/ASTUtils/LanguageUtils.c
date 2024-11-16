@@ -21,7 +21,7 @@ char* _languageExpressionType_toString(LanguageExpressionType type);
 
 void LanguageBinding_free(LanguageBinding* languageBinding) {
   logDebugging(_logger, "Executing destructor: %s", __func__);
-  LanguageExpression_free(languageBinding->LanguageExpression);
+  LanguageExpression_free(languageBinding->languageExpression);
   free(languageBinding->id.id);
   free(languageBinding);
 }
@@ -104,7 +104,7 @@ char* LanguageExpression_toString(LanguageExpression* languageExpression) {
 }
 
 char* LanguageBinding_toString(LanguageBinding* languageBinding) {
-  char* exprStr = LanguageExpression_toString(languageBinding->LanguageExpression);
+  char* exprStr = LanguageExpression_toString(languageBinding->languageExpression);
   char* str =
     safeAsprintf("LanguageBinding{ id: " COLORIZE_ID("%s") ", expression: %s }", languageBinding->id.id, exprStr);
   free(exprStr);
