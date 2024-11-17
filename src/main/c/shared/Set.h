@@ -36,7 +36,7 @@ SetElement* Set_find(Set set, SetElement ele);
 void Set_free(Set set);
 void Set_freeLogger();
 void Set_freeNotElements(Set set);
-bool Set_Has(Set set, SetElement ele);
+bool Set_has(Set set, SetElement ele);
 void Set_initializeLogger();
 /**
  * Removes and frees all elements from `left` that aren't on present in `right`.

@@ -55,7 +55,7 @@ ProductionSet ProductionSet_remove(ProductionSet set, Production* production) {
 
 bool ProductionSet_has(ProductionSet set, Production* production) {
   SetElement ele = {.production = production};
-  return Set_Has(set, ele);
+  return Set_has(set, ele);
 }
 
 Production* Production_new(Symbol lhs, ProductionRhsRuleSet productionRhsRules) {

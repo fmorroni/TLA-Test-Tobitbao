@@ -112,7 +112,7 @@ void Set_freeNotElements(Set set) {
   Set_free(set);
 }
 
-bool Set_Has(Set set, SetElement ele) {
+bool Set_has(Set set, SetElement ele) {
   return Set_find(set, ele) != NULL;
 }
 
@@ -125,7 +125,7 @@ void Set_intersection(Set left, Set right) {
   for (int i = 0; i < left->capacity; ++i) {
     Node* node = left->nodes[i];
     while (node != NULL) {
-      if (!Set_Has(right, node->element)) {
+      if (!Set_has(right, node->element)) {
         if (left->freeEleFn != NULL) left->freeEleFn(node->element);
         Node* prev = node;
         if (node == left->nodes[i]) left->nodes[i] = node->next;
