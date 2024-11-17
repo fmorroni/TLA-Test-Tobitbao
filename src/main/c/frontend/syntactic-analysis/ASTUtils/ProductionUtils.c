@@ -1,10 +1,10 @@
+#include "../../../shared/ColorMacros.h"
 #include "../../../shared/Logger.h"
 #include "../../../shared/Set.h"
 #include "../../../shared/SetElement.h"
 #include "../../../shared/String.h"
 #include "../../../shared/hashUtils.h"
 #include "../AbstractSyntaxTree.h"
-#include "ColorMacros.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>

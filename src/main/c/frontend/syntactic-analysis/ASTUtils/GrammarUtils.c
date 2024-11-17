@@ -1,7 +1,7 @@
+#include "../../../shared/ColorMacros.h"
 #include "../../../shared/Logger.h"
 #include "../../../shared/String.h"
 #include "../AbstractSyntaxTree.h"
-#include "ColorMacros.h"
 #include <stdlib.h>
 
 static Logger* _logger = NULL;
