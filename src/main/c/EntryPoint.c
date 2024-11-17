@@ -1,5 +1,6 @@
 // #include "backend/code-generation/Generator.h"
 // #include "backend/domain-specific/Calculator.h"
+#include "backend/symbol-table/SymbolTable.h"
 #include "frontend/lexical-analysis/FlexActions.h"
 #include "frontend/syntactic-analysis/ASTUtils/SentenceUtils.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
@@ -19,6 +20,7 @@
  */
 int main(const int count, const char** arguments) {
   Logger* logger = createLogger("EntryPoint");
+  initializeSymbolTableModule();
   initializeFlexActionsModule();
   initializeBisonActionsModule();
   initializeSyntacticAnalyzerModule();
@@ -77,6 +79,7 @@ int main(const int count, const char** arguments) {
   shutdownSyntacticAnalyzerModule();
   shutdownBisonActionsModule();
   shutdownFlexActionsModule();
+  destroySymbolTableModule();
   logDebugging(logger, "Compilation is done.");
   destroyLogger(logger);
   return compilationStatus;

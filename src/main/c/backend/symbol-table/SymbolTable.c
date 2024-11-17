@@ -1,0 +1,85 @@
+#include "SymbolTable.h"
+#include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
+#include "../../shared/ColorMacros.h"
+#include "../../shared/Logger.h"
+#include "../../shared/Set.h"
+#include "../../shared/SetElement.h"
+#include "../../shared/hashUtils.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ADD_TO_SYMBOL_TABLE_FMT_STR(type) "Adding " type " " COLORIZE_ID("%s") " to symbol table."
+
+static Logger* _logger = NULL;
+static Set symbolTable = NULL;
+
+uint32_t SymbolTable_hashEleFn(SetElement ele);
+bool SymbolTable_equalsEleFn(SetElement ele1, SetElement ele2);
+void SymbolTable_freeEleFn(SetElement ele);
+
+void initializeSymbolTableModule() {
+  _logger = createLogger("SymbolTableLogger");
+  symbolTable = Set_new(SymbolTable_hashEleFn, SymbolTable_equalsEleFn, NULL, NULL, NULL);
+}
+
+void destroySymbolTableModule() {
+  logDebugging(_logger, "Destroying symbol table");
+  destroyLogger(_logger);
+  Set_free(symbolTable);
+}
+
+SymbolTableEntry* SymbolTable_get(Id id) {
+  SymbolTableEntry entry = {.id = id};
+  SetElement ele = {.symbolTableEntry = entry};
+  return &Set_find(symbolTable, ele)->symbolTableEntry;
+}
+
+bool SymbolTable_has(Id id) {
+  SymbolTableEntry entry = {.id = id};
+  SetElement ele = {.symbolTableEntry = entry};
+  return Set_has(symbolTable, ele);
+}
+
+bool SymbolTable_put(SetElement ele) {
+  // Nvm no elements need to be freed after all si freeEleFn is NULL anyways.
+  // Check with `Set_has` first because `Set_add` frees the element if already present and
+  // we don't want that in this case.
+  // if (Set_has(symbolTable, ele)) return false;
+
+  return Set_add(symbolTable, ele);
+}
+
+bool SymbolTable_putGrammar(Id id, GrammarDefinition* grammar) {
+  logDebugging(_logger, ADD_TO_SYMBOL_TABLE_FMT_STR("grammar"), id.id);
+  SymbolTableEntry entry = {.id = id, .type = GRAMMAR_T, .grammar = grammar};
+  SetElement ele = {.symbolTableEntry = entry};
+  return SymbolTable_put(ele);
+}
+
+bool SymbolTable_putLanguage(Id id, LanguageExpression* expr) {
+  logDebugging(_logger, ADD_TO_SYMBOL_TABLE_FMT_STR("language"), id.id);
+  SymbolTableEntry entry = {.id = id, .type = LANGUAGE_T, .langExpression = expr};
+  SetElement ele = {.symbolTableEntry = entry};
+  return SymbolTable_put(ele);
+}
+
+bool SymbolTable_putSymbolSet(Id id, SymbolSet set) {
+  logDebugging(_logger, ADD_TO_SYMBOL_TABLE_FMT_STR("symbol set"), id.id);
+  SymbolTableEntry entry = {.id = id, .type = SYMBOL_SET_T, .set = set};
+  SetElement ele = {.symbolTableEntry = entry};
+  return SymbolTable_put(ele);
+}
+
+// Utils
+
+uint32_t SymbolTable_hashEleFn(SetElement ele) {
+  return murmurHash3(1, ele.symbolTableEntry.id.id, ele.symbolTableEntry.id.length);
+}
+
+bool SymbolTable_equalsEleFn(SetElement ele1, SetElement ele2) {
+  Id id1 = ele1.symbolTableEntry.id;
+  Id id2 = ele2.symbolTableEntry.id;
+  return id1.length == id2.length && strcmp(id1.id, id2.id) == 0;
+}
