@@ -30,3 +30,32 @@ void logSyntacticAnalyzerPushAction(const char* functionName, const char* const 
   free(effectiveFormat);
   va_end(arguments);
 }
+
+void logAlreadyDefinedError(const char* functionName, const char* id) {
+  logError(bisonActionsLogger, "%s: %s already defined.", functionName, id);
+}
+
+void logUndefined(const char* functionName, const char* id) {
+  logError(bisonActionsLogger, "%s: %s isn't defined.", functionName, id);
+}
+
+void logInvalidType(const char* functionName, const char* id, const char* expectedType, const char* realType) {
+  logError(
+    bisonActionsLogger, "%s: %s expected to be of type `%s` but was of type `%s`", functionName, id, expectedType,
+    realType
+  );
+}
+
+void logActionDebug(const char* const format, ...) {
+  va_list arguments;
+  va_start(arguments, format);
+  vlogDebugging(bisonActionsLogger, format, arguments);
+  va_end(arguments);
+}
+
+void logActionError(const char* const format, ...) {
+  va_list arguments;
+  va_start(arguments, format);
+  vlogError(bisonActionsLogger, format, arguments);
+  va_end(arguments);
+}

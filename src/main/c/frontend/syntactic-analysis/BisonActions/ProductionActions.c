@@ -18,7 +18,8 @@ ProductionSetBinding* ProductionSetBinding_new(Id setId, ProductionSet productio
 
 ProductionSet ProductionSet_new(Production* production) {
   logSyntacticAnalyzerAction(__func__);
-  ProductionSet set = Set_new(Production_hashEle, Production_equalsEle, Production_freeEle, Production_toStringEle);
+  ProductionSet set =
+    Set_new(Production_hashEle, Production_equalsEle, NULL, Production_freeEle, Production_toStringEle);
   ProductionSet_add(set, production);
   return set;
 }

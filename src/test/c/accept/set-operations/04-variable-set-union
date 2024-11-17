@@ -1,0 +1,10 @@
+G = < sigma2, N, P, S >
+N = { S, A, B }
+
+P1 = { B -> c A }
+P2 = { S -> b A | c | B, A -> a, B -> d } u P1
+
+sigma1 = { ab, bc } u {b}
+sigma2 = { a, b, c } u { hola } u { a } u sigma1
+sigma3 = sigma2 - {ab}
+sigma4 = sigma3 n sigma1

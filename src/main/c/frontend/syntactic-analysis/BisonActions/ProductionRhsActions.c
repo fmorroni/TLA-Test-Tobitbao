@@ -10,7 +10,8 @@
 ProductionRhsRuleSet ProductionRhsRuleSet_new(ProductionRhsRule* productionRhsRule) {
   logSyntacticAnalyzerAction(__func__);
   ProductionRhsRuleSet set = Set_new(
-    ProductionRhsRule_hashEle, ProductionRhsRule_equalsEle, ProductionRhsRule_freeEle, ProductionRhsRule_toStringEle
+    ProductionRhsRule_hashEle, ProductionRhsRule_equalsEle, NULL, ProductionRhsRule_freeEle,
+    ProductionRhsRule_toStringEle
   );
   ProductionRhsRuleSet_add(set, productionRhsRule);
 

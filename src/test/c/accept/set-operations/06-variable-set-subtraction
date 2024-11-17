@@ -1,0 +1,8 @@
+G = < sigma2, N, P, S >
+N = { S, A, B }
+
+P1 = { S -> B A | c | B, A -> a | b, B -> d, C -> x | y | z }
+P2 = P1 - { A -> a | b } - { B -> d} - {C -> y}
+
+sigma1 = { a, b, c, x, y, z }
+sigma2 = sigma1 - { a, b } - { a }

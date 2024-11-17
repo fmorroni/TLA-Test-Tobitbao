@@ -1,9 +1,11 @@
+#include "SymbolUtils.h"
 #include "../../../shared/ColorMacros.h"
 #include "../../../shared/Logger.h"
 #include "../../../shared/Set.h"
 #include "../../../shared/SetElement.h"
 #include "../../../shared/String.h"
 #include "../../../shared/hashUtils.h"
+#include "../../../shared/utils.h"
 #include "../AbstractSyntaxTree.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -37,8 +39,15 @@ bool Symbol_equalsEle(SetElement ele1, SetElement ele2) {
   return Symbol_equals(ele1.symbol, ele2.symbol);
 }
 
+SetElement Symbol_cloneEle(SetElement ele) {
+  char* symbol = strndup(ele.symbol.symbol, ele.symbol.length);
+  if (symbol == NULL) exitWithPerror(__func__, "malloc error");
+  SetElement clone = {.symbol = (Symbol){.symbol = symbol, .length = ele.symbol.length}};
+  return clone;
+}
+
 void Symbol_freeEle(SetElement ele) {
-  logDebugging(_logger, "Executing destructor: %s", __func__);
+  logDebugging(_logger, "Executing destructor: %s(" COLORIZE_SYMBOL("%s") ")", __func__, ele.symbol.symbol);
   free(ele.symbol.symbol);
 }
 
@@ -52,16 +61,16 @@ char* Symbol_toStringEle(SetElement ele) {
 }
 
 void SymbolSetBinding_free(SymbolSetBinding* symbolSetBinding) {
-  logDebugging(_logger, "Executing destructor: %s", __func__);
-  Set_free(symbolSetBinding->symbols);
+  logDebugging(_logger, "Executing destructor: %s(" COLORIZE_ID("%s") ")", __func__, symbolSetBinding->id.id);
+  Set_free(symbolSetBinding->set);
   free(symbolSetBinding->id.id);
   free(symbolSetBinding);
 }
 
 char* SymbolSetBinding_toString(SymbolSetBinding* symbolSetBinding) {
-  char* symbols = Set_toString(symbolSetBinding->symbols);
+  char* symbols = Set_toString(symbolSetBinding->set);
   char* str =
-    safeAsprintf("SymbolSetBinding{ id: " COLORIZE_ID("%s") ", symbols: %s }", symbolSetBinding->id.id, symbols);
+    safeAsprintf("SymbolSetBinding{ id: " COLORIZE_ID("%s") ", expression: %s }", symbolSetBinding->id.id, symbols);
   free(symbols);
   return str;
 }

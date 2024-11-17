@@ -74,6 +74,7 @@ void vlogDebugging(const Logger* logger, const char* const format, va_list argum
 
 /** Logs at ERROR level. */
 void logError(const Logger* logger, const char* const format, ...);
+void vlogError(const Logger* logger, const char* const format, va_list arguments);
 
 /** Logs at INFORMATION level. */
 void logInformation(const Logger* logger, const char* const format, ...);

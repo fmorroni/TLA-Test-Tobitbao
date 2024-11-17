@@ -1,3 +1,6 @@
+// I need to fix the fact that if `v` is used in a grammar definition after it has been initialized, then
+// `v` won't be a simple `ID` anymore but on of `ID_SYM`, `ID_PROD`, `ID_GRAM` or `ID_LANG`.
+
 N = { S, A, B }
 sigma = { a, b, c }
 
@@ -7,9 +10,9 @@ P = { S -> b A | c, A -> a }
 G2 = < sigma, N, P2, S >
 P2 = { S -> c A | c, A -> b }
 
-G3 = < sigma, N, P2, S >
+G3 = < sigma, N, P3, S >
 P3 = { S -> a A | b, A -> c }
 
 T = L(G1) n L(G2)
-T2 = L(G1) n (L(G2) n L(G3))
+T2 = L(G1) - (L(G2) u L(G3))
 T3 = T n L(G1)

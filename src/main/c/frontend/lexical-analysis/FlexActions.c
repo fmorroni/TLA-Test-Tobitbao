@@ -1,3 +1,5 @@
+#include "../../backend/symbol-table/SymbolTable.h"
+#include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "../../shared/Environment.h"
 #include "../../shared/Logger.h"
 #include "../../shared/String.h"
@@ -113,8 +115,23 @@ Token IdLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {
   _logLexicalAnalyzerContext(__func__, lexicalAnalyzerContext);
   lexicalAnalyzerContext->semanticValue->id.id = lexicalAnalyzerContext->lexeme;
   lexicalAnalyzerContext->semanticValue->id.length = lexicalAnalyzerContext->length;
+
+  SymbolTableEntry* entry = SymbolTable_get(lexicalAnalyzerContext->semanticValue->id);
   free(lexicalAnalyzerContext);
-  return ID;
+  if (entry == NULL) return ID;
+  else switch (entry->type) {
+    case SYMBOL_SET_T:
+      return ID_SYM;
+    case LANGUAGE_T:
+      return ID_LANG;
+    case GRAMMAR_T:
+      return ID_GRAM;
+    case PRODUCTION_SET_T:
+      return ID_PROD;
+    default:
+      logError(_logger, "Invalid id type %d", entry->type);
+      return UNKNOWN;
+    }
 }
 
 Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {

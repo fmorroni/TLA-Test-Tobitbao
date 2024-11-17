@@ -13,6 +13,7 @@ typedef struct SetCDT* Set;
 
 typedef struct SetIteratorCDT* SetIterator;
 
+typedef SetElement (*Set_CloneEleFn)(SetElement ele);
 typedef bool (*Set_EqualsEleFn)(SetElement ele1, SetElement ele2);
 typedef void (*Set_FreeEleFn)(SetElement ele);
 typedef uint32_t (*Set_HashEleFn)(SetElement ele);
@@ -26,12 +27,16 @@ typedef uint32_t (*Set_HashEleFn)(SetElement ele);
 typedef char* (*Set_ToStringEleFn)(SetElement ele);
 
 /**
- * If `ele` is already in `set` and `freeEleFn` was set on initialization,
- * then `ele` will be freed by this function.
+ * Add `ele` to `set` if not already present. If already present and `freeEleFn`
+ * was set on initialization, then `ele` will be freed by this function.
  *
  * @return `true` if element was inserted, `false` if it was already present.
  */
 bool Set_add(Set set, SetElement ele);
+Set Set_clone(Set set);
+/**
+ * @return pointer to element if found, `NULL` otherwise.
+ */
 SetElement* Set_find(Set set, SetElement ele);
 void Set_free(Set set);
 void Set_freeLogger();
@@ -45,11 +50,12 @@ void Set_initializeLogger();
 void Set_intersection(Set left, Set right);
 bool Set_isEmpty(Set set);
 Set Set_new(
-  Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_FreeEleFn freeEleFn, Set_ToStringEleFn toStringEleFn
+  Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_CloneEleFn cloneEleFn, Set_FreeEleFn freeEleFn,
+  Set_ToStringEleFn toStringEleFn
 );
 void Set_printInfo(Set set);
 /**
- * If `ele` is present in `set`, then the node containing `ele` will be freed by this function.
+ * If `ele` is present in `set`, then remove `ele` from `set` and free node containing `ele`.
  *
  * @return `true` if element was removed, `false` if it was not present to begin with.
  */
@@ -60,7 +66,7 @@ bool Set_remove(Set set, SetElement ele);
 void Set_subtraction(Set minuend, Set subtrahend);
 char* Set_toString(Set set);
 /**
- * @param `dest` Destination set, all elements from `src` will be pushed to `dest`.
+ * @param `dest` Destination set. All elements from `src` will be pushed to `dest`.
  * @param `src` Source set. Will be freed after call to prevent double free errors on the elements.
  */
 void Set_union(Set dest, Set src);

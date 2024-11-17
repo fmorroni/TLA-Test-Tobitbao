@@ -54,7 +54,11 @@
 }
 
 /** Terminals. */
-%token <id>    ID
+%token <id> ID
+%token <id> ID_GRAM
+%token <id> ID_LANG
+%token <id> ID_PROD
+%token <id> ID_SYM
 %token <symbol> SYMBOL
 %token <token> ANGLE_BRACKET_CLOSE
 %token <token> ANGLE_BRACKET_OPEN
@@ -121,8 +125,7 @@ actually needed.
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
-%left UNION INTERSECTION
-%left SUBTRACTION
+%left UNION INTERSECTION SUBTRACTION
 %left CONCATENATION
 %left COMPLEMENT
 %left CARET
@@ -157,57 +160,59 @@ grammarDefinition:
                                                 }
 
 symbolSetBinding:
-  ID[setId] EQUALS symbolSet[set]                               { $$ = SymbolSetBinding_new($setId, $set); }
+  ID[id] EQUALS symbolSet[set]                                            { $$ = SymbolSetBinding_new($id, $set); }
 
-symbolSet: BRACES_OPEN symbols[values] BRACES_CLOSE             { $$ = $values; }
-  | BRACES_OPEN symbols[values] COMMA BRACES_CLOSE              { $$ = $values; }
-  | symbolSet[left] UNION symbolSet[right]                      { $$ = SymbolSet_union($left, $right); }
-  | symbolSet[left] INTERSECTION symbolSet[right]               { $$ = SymbolSet_intersection($left, $right); }
-  | symbolSet[left] SUBTRACTION symbolSet[right]                { $$ = SymbolSet_subtraction($left, $right); }
-  | PARENTHESIS_OPEN symbolSet[sSet] PARENTHESIS_CLOSE          { $$ = $sSet; }
+symbolSet: BRACES_OPEN symbols[values] BRACES_CLOSE                       { $$ = $values; }
+  | BRACES_OPEN symbols[values] COMMA BRACES_CLOSE                        { $$ = $values; }
+  | ID_SYM                                                                { $$ = SymbolSet_clone($1); }
+  | symbolSet[left] UNION symbolSet[right]                                { $$ = SymbolSet_union($left, $right); }
+  | symbolSet[left] INTERSECTION symbolSet[right]                         { $$ = SymbolSet_intersection($left, $right); }
+  | symbolSet[left] SUBTRACTION symbolSet[right]                          { $$ = SymbolSet_subtraction($left, $right); }
+  | PARENTHESIS_OPEN symbolSet[set] PARENTHESIS_CLOSE                     { $$ = $set; }
   ;
 
-symbols: SYMBOL                                                 { $$ = SymbolSet_new($1); }
-  | symbols[list] COMMA SYMBOL[val]                             { $$ = SymbolSet_add($list, $val); }
+symbols: SYMBOL                                                           { $$ = SymbolSet_new($1); }
+  | symbols[list] COMMA SYMBOL[val]                                       { $$ = SymbolSet_add($list, $val); }
   ;
 
 productionSetBinding:
-  ID[setId] EQUALS productionSet[set]                           { $$ = ProductionSetBinding_new($setId, $set); }
+  ID[id] EQUALS productionSet[setExpr]                                    { $$ = ProductionSetBinding_new($id, $setExpr); }
 
-productionSet: BRACES_OPEN productions[values] BRACES_CLOSE     { $$ = $values; }
-  | BRACES_OPEN productions[values] COMMA BRACES_CLOSE          { $$ = $values; }
-  | productionSet[left] UNION productionSet[right]              { $$ = ProductionSet_union($left, $right); }
-  | productionSet[left] INTERSECTION productionSet[right]       { $$ = ProductionSet_intersection($left, $right); }
-  | productionSet[left] SUBTRACTION productionSet[right]        { $$ = ProductionSet_subtraction($left, $right); }
-  | PARENTHESIS_OPEN productionSet[pSet] PARENTHESIS_CLOSE      { $$ = $pSet; }
+productionSet: BRACES_OPEN productions[values] BRACES_CLOSE               { $$ = $values; }
+  | BRACES_OPEN productions[values] COMMA BRACES_CLOSE                    { $$ = $values; }
+  // | ID_PROD                                                               { $$ = SymbolSet_clone($1); }
+  | productionSet[left] UNION productionSet[right]                        { $$ = ProductionSet_union($left, $right); }
+  | productionSet[left] INTERSECTION productionSet[right]                 { $$ = ProductionSet_intersection($left, $right); }
+  | productionSet[left] SUBTRACTION productionSet[right]                  { $$ = ProductionSet_subtraction($left, $right); }
+  | PARENTHESIS_OPEN productionSet[pSet] PARENTHESIS_CLOSE                { $$ = $pSet; }
   ;
 
-productions: production                                         { $$ = ProductionSet_new($1); }
-  | productions[list] COMMA production[val]                     { $$ = ProductionSet_add($list, $val); }
+productions: production                                                   { $$ = ProductionSet_new($1); }
+  | productions[list] COMMA production[val]                               { $$ = ProductionSet_add($list, $val); }
   ;
 
-production: SYMBOL[lhs] RIGHT_ARROW productionRhsRules[rhs]     { $$ = Production_new($lhs, $rhs); }
+production: SYMBOL[lhs] RIGHT_ARROW productionRhsRules[rhs]               { $$ = Production_new($lhs, $rhs); }
 
-productionRhsRules: productionRhsRule                           { $$ = ProductionRhsRuleSet_new($1); }
-  | productionRhsRules[list] PIPE productionRhsRule[val]        { $$ = ProductionRhsRuleSet_add($list, $val); }
+productionRhsRules: productionRhsRule                                     { $$ = ProductionRhsRuleSet_new($1); }
+  | productionRhsRules[list] PIPE productionRhsRule[val]                  { $$ = ProductionRhsRuleSet_add($list, $val); }
   ;
 
-productionRhsRule: SYMBOL SYMBOL                                { $$ = ProductionRhsRuleSymbolSymbol_new($1, $2); }
-  | SYMBOL                                                      { $$ = ProductionRhsRuleSymbol_new($1); }
-  | LAMBDA                                                      { $$ = ProductionRhsRuleLambda_new(); }
+productionRhsRule: SYMBOL SYMBOL                                          { $$ = ProductionRhsRuleSymbolSymbol_new($1, $2); }
+  | SYMBOL                                                                { $$ = ProductionRhsRuleSymbol_new($1); }
+  | LAMBDA                                                                { $$ = ProductionRhsRuleLambda_new(); }
   ;
 
-languageBinding: ID[languageID] EQUALS languageExpression[lang]             { $$ = LanguageBinding_new($languageID, $lang); } 
+languageBinding: ID[id] EQUALS languageExpression[lang]                   { $$ = LanguageBinding_new($id, $lang); } 
 
 languageExpression: LANGUAGE PARENTHESIS_OPEN
-     ID[grammarID]
-   PARENTHESIS_CLOSE                                                        { $$ = SimpleLanguageExpression_new($grammarID, LANG_OF_GRAMMAR_T); }
- | ID[langId]                                                               { $$ = SimpleLanguageExpression_new($langId, LANG_ID_T); }
- | languageExpression[left] UNION languageExpression[right]                 { $$ = BinaryLanguageExpression_new($left, $right, LANG_UNION_T); }
- | languageExpression[left] INTERSECTION languageExpression[right]          { $$ = BinaryLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
- | languageExpression[left] SUBTRACTION languageExpression[right]           { $$ = BinaryLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
- | languageExpression[left] CONCATENATION languageExpression[right]         { $$ = BinaryLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
- | languageExpression[expr] CARET REVERSE                                   { $$ = UnaryLanguageExpression_new($expr, LANG_REVERSE_T); }
- | COMPLEMENT languageExpression[expr]                                      { $$ = UnaryLanguageExpression_new($expr, LANG_COMPLEMENT_T); }
- | PARENTHESIS_OPEN languageExpression[expr] PARENTHESIS_CLOSE              { $$ = $expr; }
+     ID_GRAM[grammarID]
+   PARENTHESIS_CLOSE                                                      { $$ = SimpleLanguageExpression_new($grammarID, LANG_OF_GRAMMAR_T); }
+ | ID_LANG[langId]                                                        { $$ = SimpleLanguageExpression_new($langId, LANG_ID_T); }
+ | languageExpression[left] UNION languageExpression[right]               { $$ = BinaryLanguageExpression_new($left, $right, LANG_UNION_T); }
+ | languageExpression[left] INTERSECTION languageExpression[right]        { $$ = BinaryLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
+ | languageExpression[left] SUBTRACTION languageExpression[right]         { $$ = BinaryLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
+ | languageExpression[left] CONCATENATION languageExpression[right]       { $$ = BinaryLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
+ | languageExpression[expr] CARET REVERSE                                 { $$ = UnaryLanguageExpression_new($expr, LANG_REVERSE_T); }
+ | COMPLEMENT languageExpression[expr]                                    { $$ = UnaryLanguageExpression_new($expr, LANG_COMPLEMENT_T); }
+ | PARENTHESIS_OPEN languageExpression[expr] PARENTHESIS_CLOSE            { $$ = $expr; }
  ;

@@ -28,6 +28,7 @@ typedef struct SetCDT {
   Node** nodes;
   Set_HashEleFn hashEleFn;
   Set_EqualsEleFn equalsEleFn;
+  Set_CloneEleFn cloneEleFn;
   Set_FreeEleFn freeEleFn;
   Set_ToStringEleFn toStringEleFn;
 } SetCDT;
@@ -71,6 +72,23 @@ bool Set_add(Set set, SetElement ele) {
   return true;
 }
 
+Set Set_clone(Set set) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  if (set->cloneEleFn == NULL) exitInvalidArgument(__func__, "Set cloneEleFn can't be NULL for cloning");
+  Set clone = Set_new(set->hashEleFn, set->equalsEleFn, set->cloneEleFn, set->freeEleFn, set->toStringEleFn);
+  size_t count = 0;
+  for (int i = 0; i < set->capacity; ++i) {
+    Node* node = set->nodes[i];
+    while (node != NULL) {
+      Set_add(clone, set->cloneEleFn(node->element));
+      node = node->next;
+      ++count;
+    }
+    if (count >= set->count) break;
+  }
+  return clone;
+}
+
 SetElement* Set_find(Set set, SetElement ele) {
   if (set == NULL) SET_INSTANCE_NULL;
   uint32_t idx;
@@ -85,7 +103,7 @@ SetElement* Set_find(Set set, SetElement ele) {
 
 void Set_free(Set set) {
   if (set == NULL) SET_INSTANCE_NULL;
-  // size_t count = 0;
+  size_t count = 0;
   for (int i = 0; i < set->capacity; ++i) {
     Node* node = set->nodes[i];
     while (node != NULL) {
@@ -93,8 +111,9 @@ void Set_free(Set set) {
       Node* prev = node;
       node = node->next;
       free(prev);
-      // if (++count >= set->length) return;
+      ++count;
     }
+    if (count >= set->count) break;
   }
   free((void*)set->nodes);
   free(set);
@@ -142,7 +161,8 @@ bool Set_isEmpty(Set set) {
 }
 
 Set Set_new(
-  Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_FreeEleFn freeEleFn, Set_ToStringEleFn toStringEleFn
+  Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_CloneEleFn cloneEleFn, Set_FreeEleFn freeEleFn,
+  Set_ToStringEleFn toStringEleFn
 ) {
   if (hashEleFn == NULL || equalsEleFn == NULL) {
     exitInvalidArgument(__func__, "Both `hashEleFn` and `equalsEleFn` are required arguments");
@@ -158,6 +178,7 @@ Set Set_new(
   set->count = 0;
   set->hashEleFn = hashEleFn;
   set->equalsEleFn = equalsEleFn;
+  set->cloneEleFn = cloneEleFn;
   set->freeEleFn = freeEleFn;
   set->toStringEleFn = toStringEleFn;
   return set;

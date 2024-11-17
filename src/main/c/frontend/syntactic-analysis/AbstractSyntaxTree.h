@@ -15,6 +15,9 @@ typedef struct SetCDT* Set;
  * Node types for the Abstract Syntax Tree (AST).
  */
 
+typedef enum { LANGUAGE_T = 0, SYMBOL_SET_T, PRODUCTION_SET_T, GRAMMAR_T } VariableType;
+const char* VariableType_toString(VariableType type);
+
 typedef enum { GRAMMAR_DEFINITION, SYMBOL_SET, PRODUCTION_SET, LANGUAGE_SENTENCE } SentenceType;
 
 typedef enum { SYMBOL_SYMBOL_T, SYMBOL_T, LAMBDA_T } ProductionRhsRuleType;
@@ -66,6 +69,16 @@ struct Program {
   SentenceArray sentences;
 };
 
+struct Sentence {
+  union {
+    GrammarDefinition* grammarDefinition;
+    SymbolSetBinding* symbolSetBinding;
+    ProductionSetBinding* productionSetBinding;
+    LanguageBinding* languageBinding;
+  };
+  SentenceType type;
+};
+
 struct GrammarDefinition {
   Id id;
   Id terminalSetId;
@@ -76,22 +89,12 @@ struct GrammarDefinition {
 
 struct SymbolSetBinding {
   Id id;
-  SymbolSet symbols;
+  SymbolSet set;
 };
 
 struct ProductionSetBinding {
   Id id;
   ProductionSet productions;
-};
-
-struct Sentence {
-  union {
-    GrammarDefinition* grammarDefinition;
-    SymbolSetBinding* symbolSetBinding;
-    ProductionSetBinding* productionSetBinding;
-    LanguageBinding* languageBinding;
-  };
-  SentenceType type;
 };
 
 struct Production {

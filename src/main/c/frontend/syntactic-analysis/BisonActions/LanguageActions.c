@@ -1,3 +1,4 @@
+#include "../../../backend/symbol-table/SymbolTable.h"
 #include "../../../shared/Logger.h"
 #include "../../../shared/utils.h"
 #include "../ASTUtils/LanguageUtils.h"
@@ -59,6 +60,11 @@ LanguageBinding* LanguageBinding_new(Id langId, LanguageExpression* langExpressi
   LanguageBinding* languageBinding = safeMalloc(sizeof(LanguageBinding));
   languageBinding->id = langId;
   languageBinding->languageExpression = langExpression;
+
+  if (!SymbolTable_putLanguage(langId, langExpression)) {
+    logAlreadyDefinedError(__func__, langId.id);
+  }
+
   return languageBinding;
 }
 

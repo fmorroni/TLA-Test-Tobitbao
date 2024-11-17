@@ -118,6 +118,10 @@ void logError(const Logger* logger, const char* const format, ...) {
   va_end(arguments);
 }
 
+void vlogError(const Logger* logger, const char* const format, va_list arguments) {
+  _log(logger, ERROR, format, arguments);
+}
+
 void logInformation(const Logger* logger, const char* const format, ...) {
   va_list arguments;
   va_start(arguments, format);
