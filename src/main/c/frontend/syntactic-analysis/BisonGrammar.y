@@ -153,9 +153,9 @@ grammarDefinition:
     ID[terminalsId] COMMA
     ID[nonTerminalsId] COMMA
     ID[productionsId] COMMA
-    ID[initialSymbolId]
+    SYMBOL[initialSymbol]
   ANGLE_BRACKET_CLOSE                           { $$ = GrammarDefinition_new(
-                                                         $grammarId, $terminalsId, $nonTerminalsId, $productionsId, $initialSymbolId
+                                                         $grammarId, $terminalsId, $nonTerminalsId, $productionsId, $initialSymbol
                                                        );
                                                 }
 

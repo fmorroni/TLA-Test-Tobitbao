@@ -4,7 +4,7 @@
 #include "ActionsLogger.h"
 
 GrammarDefinition*
-GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id productionSetId, Id initialSymbolId) {
+GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id productionSetId, Symbol initialSymbolId) {
   logSyntacticAnalyzerAction(__func__);
   GrammarDefinition* grammar = safeMalloc(sizeof(GrammarDefinition));
   grammar->id = grammarId;

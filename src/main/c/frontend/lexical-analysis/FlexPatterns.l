@@ -31,7 +31,7 @@
  */
 
 id_r ([[:alpha:]]|_+[[:alnum:]])[[:alnum:]_]*
-symbol_r [^[:space:],{}]+
+symbol_r [^[:space:],{}<>]+
 
 %%
 
@@ -78,10 +78,11 @@ symbol_r [^[:space:],{}]+
                                       BEGIN(INITIAL);
                                       return t;
                                     }
-<GRAMMAR_DEFINITION>{id_r}          { return IdLexemeAction(createLexicalAnalyzerContext()); }
-<GRAMMAR_DEFINITION>","             { return TokenLexemeAction(createLexicalAnalyzerContext(), COMMA); }
-<GRAMMAR_DEFINITION>[[:space:]]+    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<GRAMMAR_DEFINITION>.               { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
+<GRAMMAR_DEFINITION>{id_r}                            { return IdLexemeAction(createLexicalAnalyzerContext()); }
+<GRAMMAR_DEFINITION>{symbol_r}/[[:space:]]*">"        { return SymbolLexemeAction(createLexicalAnalyzerContext()); }
+<GRAMMAR_DEFINITION>","                               { return TokenLexemeAction(createLexicalAnalyzerContext(), COMMA); }
+<GRAMMAR_DEFINITION>[[:space:]]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
+<GRAMMAR_DEFINITION>.                                 { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
 "{"                                 { 
                                       BEGIN(SET_DEFINITION);

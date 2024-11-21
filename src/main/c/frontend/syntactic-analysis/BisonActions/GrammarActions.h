@@ -4,6 +4,6 @@
 #include "../AbstractSyntaxTree.h"
 
 GrammarDefinition*
-GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id productionSetId, Id initialSymbolId);
+GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id productionSetId, Symbol initialSymbolId);
 
 #endif

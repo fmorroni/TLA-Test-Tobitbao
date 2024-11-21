@@ -84,7 +84,7 @@ struct GrammarDefinition {
   Id terminalSetId;
   Id nonTerminalSetId;
   Id productionSetId;
-  Id initialSymbolId;
+  Symbol initialSymbolId;
 };
 
 struct SymbolSetBinding {
