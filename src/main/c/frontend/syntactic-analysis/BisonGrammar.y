@@ -86,6 +86,8 @@
 %type <grammarDefinition> grammarDefinition
 %type <languageBinding> languageBinding
 %type <languageExpression> languageExpression
+%type <id> optionallyDefinedIdProd
+%type <id> optionallyDefinedIdSym
 %type <production> production
 %type <productionRhsRule> productionRhsRule
 %type <productionRhsRules> productionRhsRules
@@ -150,14 +152,20 @@ sentence: grammarDefinition                     { $$ = GrammarDefinitionSentence
 
 grammarDefinition:
   ID[grammarId] EQUALS ANGLE_BRACKET_OPEN
-    ID[terminalsId] COMMA
-    ID[nonTerminalsId] COMMA
-    ID[productionsId] COMMA
+    optionallyDefinedIdSym[terminalsId] COMMA
+    optionallyDefinedIdSym[nonTerminalsId] COMMA
+    optionallyDefinedIdProd[productionsId] COMMA
     SYMBOL[initialSymbol]
   ANGLE_BRACKET_CLOSE                           { $$ = GrammarDefinition_new(
                                                          $grammarId, $terminalsId, $nonTerminalsId, $productionsId, $initialSymbol
                                                        );
                                                 }
+
+optionallyDefinedIdSym: ID                      { $$ = $1; }
+  | ID_SYM                                      { $$ = $1; }
+
+optionallyDefinedIdProd: ID                     { $$ = $1; }
+  | ID_PROD                                     { $$ = $1; }
 
 symbolSetBinding:
   ID[id] EQUALS symbolSet[set]                                            { $$ = SymbolSetBinding_new($id, $set); }
