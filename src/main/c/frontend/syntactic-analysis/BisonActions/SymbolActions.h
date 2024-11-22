@@ -6,6 +6,8 @@
 SymbolSetBinding* SymbolSetBinding_new(Id setId, SymbolSet set);
 
 SymbolSet SymbolSet_new(Symbol symbol);
+void SymbolSetBinding_initialize(Id setId, SymbolSet set);
+void SymbolSetBinding_assign(Id setId, SymbolSet set);
 SymbolSet SymbolSet_add(SymbolSet array, Symbol symbol);
 SymbolSet SymbolSet_clone(Id id);
 

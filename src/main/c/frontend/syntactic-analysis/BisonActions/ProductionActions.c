@@ -14,14 +14,26 @@ ProductionSetBinding* ProductionSetBinding_new(Id setId, ProductionSet productio
   productionSetBinding->id = setId;
   productionSetBinding->productions = productions;
 
-  if (!SymbolTable_putProductionSet(setId, productions)) {
+  return productionSetBinding;
+}
+
+void ProductionSetBinding_initialize(Id setId, ProductionSet set) {
+  if (!SymbolTable_putProductionSet(setId, set)) {
     logAlreadyDefinedError(__func__, setId.id);
-    // TODO: Change this... Prolly the best is to push all errors to a list and if the list isn't
-    // empty at the end we exit with an error code.
+    // TODO: propper error handling.
     exit(1);
   }
+}
 
-  return productionSetBinding;
+void ProductionSetBinding_assign(Id setId, ProductionSet set) {
+  // Note `entry` should never be NULL.
+  SymbolTableEntry* entry = SymbolTable_get(setId);
+  if (entry->productionSet != NULL) {
+    logAlreadyDefinedError(__func__, setId.id);
+    // TODO: propper error handling.
+    exit(1);
+  }
+  entry->productionSet = set;
 }
 
 ProductionSet ProductionSet_new(Production* production) {

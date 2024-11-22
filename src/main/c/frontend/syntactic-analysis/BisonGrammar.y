@@ -12,8 +12,8 @@
 #include "BisonActions/SymbolActions.h"
 #include "SyntacticAnalyzer.h"
 #include "AbstractSyntaxTree.h"
-#include "../../shared/Array.h"
-#include <stdio.h>
+#include "../../backend/symbol-table/SymbolTable.h"
+#include <stddef.h>
 
 %}
 
@@ -161,13 +161,14 @@ grammarDefinition:
                                                        );
                                                 }
 
-optionallyDefinedIdSym: ID                      { $$ = $1; }
+optionallyDefinedIdSym: ID                      { $$ = $1; SymbolTable_putSymbolSet($1, NULL); }
   | ID_SYM                                      { $$ = $1; }
 
-optionallyDefinedIdProd: ID                     { $$ = $1; }
+optionallyDefinedIdProd: ID                     { $$ = $1; SymbolTable_putProductionSet($1, NULL); }
   | ID_PROD                                     { $$ = $1; }
 
-symbolSetBinding: ID[id] EQUALS symbolSet[set]                            { $$ = SymbolSetBinding_new($id, $set); }
+symbolSetBinding: ID[id] EQUALS symbolSet[set]                            { $$ = SymbolSetBinding_new($id, $set); SymbolSetBinding_initialize($id, $set); }
+  | ID_SYM[id] EQUALS symbolSet[set]                                      { $$ = SymbolSetBinding_new($id, $set); SymbolSetBinding_assign($id, $set); }
 
 symbolSet: BRACES_OPEN symbols[values] BRACES_CLOSE                       { $$ = $values; }
   | BRACES_OPEN symbols[values] COMMA BRACES_CLOSE                        { $$ = $values; }
@@ -182,7 +183,8 @@ symbols: SYMBOL                                                           { $$ =
   | symbols[list] COMMA SYMBOL[val]                                       { $$ = SymbolSet_add($list, $val); }
   ;
 
-productionSetBinding: ID[id] EQUALS productionSet[setExpr]                { $$ = ProductionSetBinding_new($id, $setExpr); }
+productionSetBinding: ID[id] EQUALS productionSet[set]                    { $$ = ProductionSetBinding_new($id, $set); ProductionSetBinding_initialize($id, $set); }
+  | ID_PROD[id] EQUALS productionSet[set]                                 { $$ = ProductionSetBinding_new($id, $set); ProductionSetBinding_assign($id, $set); }
 
 productionSet: BRACES_OPEN productions[values] BRACES_CLOSE               { $$ = $values; }
   | BRACES_OPEN productions[values] COMMA BRACES_CLOSE                    { $$ = $values; }
