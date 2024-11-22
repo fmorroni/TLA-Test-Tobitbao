@@ -46,14 +46,3 @@ void releaseProgram(Program* program) {
     Program_free(program);
   }
 }
-
-static char* varTypeStr[] = {
-  [LANGUAGE_T] = "LANGUAGE_T",
-  [SYMBOL_SET_T] = "SYMBOL_SET_T",
-  [PRODUCTION_SET_T] = "PRODUCTION_SET_T",
-  [GRAMMAR_T] = "GRAMMAR_T"
-};
-
-const char* VariableType_toString(VariableType type) {
-  return varTypeStr[type];
-}

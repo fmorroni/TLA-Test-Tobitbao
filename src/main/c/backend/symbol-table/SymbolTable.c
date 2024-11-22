@@ -114,3 +114,14 @@ void logInvalidType(const char* functionName, const char* id, const char* expect
     _logger, "%s: %s expected to be of type `%s` but was of type `%s`", functionName, id, expectedType, realType
   );
 }
+
+static char* varTypeStr[] = {
+  [LANGUAGE_T] = "LANGUAGE_T",
+  [SYMBOL_SET_T] = "SYMBOL_SET_T",
+  [PRODUCTION_SET_T] = "PRODUCTION_SET_T",
+  [GRAMMAR_T] = "GRAMMAR_T"
+};
+
+const char* VariableType_toString(VariableType type) {
+  return varTypeStr[type];
+}

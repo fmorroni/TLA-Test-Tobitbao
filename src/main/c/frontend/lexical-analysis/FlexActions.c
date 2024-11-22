@@ -1,5 +1,4 @@
 #include "../../backend/symbol-table/SymbolTable.h"
-#include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "../../shared/Environment.h"
 #include "../../shared/Logger.h"
 #include "../../shared/String.h"

@@ -4,6 +4,9 @@
 #include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include <stdbool.h>
 
+typedef enum { LANGUAGE_T = 0, SYMBOL_SET_T, PRODUCTION_SET_T, GRAMMAR_T } VariableType;
+const char* VariableType_toString(VariableType type);
+
 typedef struct {
   Id id;
   VariableType type;
