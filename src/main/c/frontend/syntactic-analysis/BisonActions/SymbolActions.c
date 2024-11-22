@@ -72,8 +72,11 @@ SymbolSet SymbolSet_subtraction(SymbolSet left, SymbolSet right) {
 }
 
 SymbolSet SymbolSet_clone(Id id) {
-  SymbolTableEntry* entry = SymbolTable_getValidated(id, SYMBOL_SET_T, __func__);
-  if (entry == NULL) return NULL;
+  // Note: at this point `entry` will never be NULL because to get here flex must've generated an `ID_PROD`
+  // and for that it must've found `id` in the table, otherwise it would generate an `ID` and bison would 
+  // fail with a sintactic error. The `entry` will also be of the correct type, as flex would otherwise have
+  // generated an `ID_<type>` with `<type>` other than `PROD` which would also cause a sintactic error.
+  SymbolTableEntry* entry = SymbolTable_get(id);
   free(id.id);
   SymbolSet set = Set_clone(entry->symbolSet);
   return set;

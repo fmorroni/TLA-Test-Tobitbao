@@ -38,18 +38,6 @@ SymbolTableEntry* SymbolTable_get(Id id) {
   return &Set_find(symbolTable, ele)->symbolTableEntry;
 }
 
-SymbolTableEntry* SymbolTable_getValidated(Id id, VariableType expectedType, const char* functionName) {
-  SymbolTableEntry* entry = SymbolTable_get(id);
-  if (entry == NULL) {
-    logUndefined(functionName, id.id);
-    return NULL;
-  } else if (entry->type != expectedType) {
-    logInvalidType(functionName, id.id, VariableType_toString(expectedType), VariableType_toString(entry->type));
-    return NULL;
-  }
-  return entry;
-}
-
 bool SymbolTable_has(Id id) {
   SymbolTableEntry entry = {.id = id};
   SetElement ele = {.symbolTableEntry = entry};
@@ -57,11 +45,6 @@ bool SymbolTable_has(Id id) {
 }
 
 bool SymbolTable_put(SetElement ele) {
-  // Nvm no elements need to be freed after all si freeEleFn is NULL anyways.
-  // Check with `Set_has` first because `Set_add` frees the element if already present and
-  // we don't want that in this case.
-  // if (Set_has(symbolTable, ele)) return false;
-
   return Set_add(symbolTable, ele);
 }
 

@@ -132,8 +132,8 @@ ProductionSet ProductionSet_subtraction(ProductionSet left, ProductionSet right)
 }
 
 ProductionSet ProductionSet_clone(Id id) {
-  SymbolTableEntry* entry = SymbolTable_getValidated(id, PRODUCTION_SET_T, __func__);
-  if (entry == NULL) return NULL;
+  // Note: `entry` will never be NULL (see comment in SymbolSet_clone at SymbolActions.c)
+  SymbolTableEntry* entry = SymbolTable_get(id);
   free(id.id);
   ProductionSet set = Set_clone(entry->productionSet);
   return set;

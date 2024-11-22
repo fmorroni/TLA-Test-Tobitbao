@@ -21,7 +21,6 @@ typedef struct {
 void initializeSymbolTableModule();
 void destroySymbolTableModule();
 SymbolTableEntry* SymbolTable_get(Id id);
-SymbolTableEntry* SymbolTable_getValidated(Id id, VariableType expectedType, const char* functionName);
 bool SymbolTable_has(Id id);
 bool SymbolTable_putGrammar(Id id, GrammarDefinition* grammar);
 bool SymbolTable_putLanguage(Id id, LanguageExpression* expr);
