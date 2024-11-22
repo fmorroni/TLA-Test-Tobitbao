@@ -72,15 +72,9 @@ SymbolSet SymbolSet_subtraction(SymbolSet left, SymbolSet right) {
 }
 
 SymbolSet SymbolSet_clone(Id id) {
-  SymbolTableEntry* entry = SymbolTable_get(id);
-  if (entry == NULL) {
-    logUndefined(__func__, id.id);
-    return NULL;
-  } else if (entry->type != SYMBOL_SET_T) {
-    logInvalidType(__func__, id.id, VariableType_toString(SYMBOL_SET_T), VariableType_toString(entry->type));
-    return NULL;
-  }
+  SymbolTableEntry* entry = SymbolTable_getValidated(id, SYMBOL_SET_T, __func__);
+  if (entry == NULL) return NULL;
   free(id.id);
-  Set set = Set_clone(entry->set);
+  SymbolSet set = Set_clone(entry->symbolSet);
   return set;
 }

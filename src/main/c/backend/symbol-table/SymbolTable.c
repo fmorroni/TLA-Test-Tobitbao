@@ -18,6 +18,8 @@ static Set symbolTable = NULL;
 uint32_t SymbolTable_hashEleFn(SetElement ele);
 bool SymbolTable_equalsEleFn(SetElement ele1, SetElement ele2);
 void SymbolTable_freeEleFn(SetElement ele);
+void logUndefined(const char* functionName, const char* id);
+void logInvalidType(const char* functionName, const char* id, const char* expectedType, const char* realType);
 
 void initializeSymbolTableModule() {
   _logger = createLogger("SymbolTableLogger");
@@ -34,6 +36,18 @@ SymbolTableEntry* SymbolTable_get(Id id) {
   SymbolTableEntry entry = {.id = id};
   SetElement ele = {.symbolTableEntry = entry};
   return &Set_find(symbolTable, ele)->symbolTableEntry;
+}
+
+SymbolTableEntry* SymbolTable_getValidated(Id id, VariableType expectedType, const char* functionName) {
+  SymbolTableEntry* entry = SymbolTable_get(id);
+  if (entry == NULL) {
+    logUndefined(functionName, id.id);
+    return NULL;
+  } else if (entry->type != expectedType) {
+    logInvalidType(functionName, id.id, VariableType_toString(expectedType), VariableType_toString(entry->type));
+    return NULL;
+  }
+  return entry;
 }
 
 bool SymbolTable_has(Id id) {
@@ -82,4 +96,14 @@ bool SymbolTable_equalsEleFn(SetElement ele1, SetElement ele2) {
   Id id1 = ele1.symbolTableEntry.id;
   Id id2 = ele2.symbolTableEntry.id;
   return id1.length == id2.length && strcmp(id1.id, id2.id) == 0;
+}
+
+void logUndefined(const char* functionName, const char* id) {
+  logError(_logger, "%s: %s isn't defined.", functionName, id);
+}
+
+void logInvalidType(const char* functionName, const char* id, const char* expectedType, const char* realType) {
+  logError(
+    _logger, "%s: %s expected to be of type `%s` but was of type `%s`", functionName, id, expectedType, realType
+  );
 }
