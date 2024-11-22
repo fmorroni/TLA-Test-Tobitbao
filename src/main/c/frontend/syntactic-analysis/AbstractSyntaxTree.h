@@ -15,7 +15,7 @@ typedef struct SetCDT* Set;
  * Node types for the Abstract Syntax Tree (AST).
  */
 
-typedef enum { GRAMMAR_DEFINITION, SYMBOL_SET, PRODUCTION_SET, LANGUAGE_SENTENCE } SentenceType;
+typedef enum { GRAMMAR_DEFINITION, SYMBOL_SET_BINDING, PRODUCTION_SET_BINDING, LANGUAGE_BINDING } SentenceType;
 
 typedef enum { SYMBOL_SYMBOL_T, SYMBOL_T, LAMBDA_T } ProductionRhsRuleType;
 

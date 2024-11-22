@@ -38,7 +38,7 @@ Sentence* GrammarDefinitionSentence_new(GrammarDefinition* grammarDefinition) {
 Sentence* SymbolSetBindingSentence_new(SymbolSetBinding* symbolSetBinding) {
   logSyntacticAnalyzerAction(__func__);
   Sentence* sentence = safeMalloc(sizeof(Sentence));
-  sentence->type = SYMBOL_SET;
+  sentence->type = SYMBOL_SET_BINDING;
   sentence->symbolSetBinding = symbolSetBinding;
 
   return sentence;
@@ -47,7 +47,7 @@ Sentence* SymbolSetBindingSentence_new(SymbolSetBinding* symbolSetBinding) {
 Sentence* ProductionSetBindingSentence_new(ProductionSetBinding* productionSetBinding) {
   logSyntacticAnalyzerAction(__func__);
   Sentence* sentence = safeMalloc(sizeof(Sentence));
-  sentence->type = PRODUCTION_SET;
+  sentence->type = PRODUCTION_SET_BINDING;
   sentence->productionSetBinding = productionSetBinding;
 
   return sentence;

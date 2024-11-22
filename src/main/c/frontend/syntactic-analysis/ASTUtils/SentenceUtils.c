@@ -29,13 +29,13 @@ void SentenceArray_freeEle(ArrayElement ele) {
   case GRAMMAR_DEFINITION:
     GrammarDefinition_free(ele.sentence->grammarDefinition);
     break;
-  case SYMBOL_SET:
+  case SYMBOL_SET_BINDING:
     SymbolSetBinding_free(ele.sentence->symbolSetBinding);
     break;
-  case PRODUCTION_SET:
+  case PRODUCTION_SET_BINDING:
     ProductionSetBinding_free(ele.sentence->productionSetBinding);
     break;
-  case LANGUAGE_SENTENCE:
+  case LANGUAGE_BINDING:
     LanguageBinding_free(ele.sentence->languageBinding);
   }
   free(ele.sentence);
@@ -47,13 +47,13 @@ char* Sentence_toString(Sentence* sentence) {
   case GRAMMAR_DEFINITION:
     str = GrammarDefinition_toString(sentence->grammarDefinition);
     break;
-  case SYMBOL_SET:
+  case SYMBOL_SET_BINDING:
     str = SymbolSetBinding_toString(sentence->symbolSetBinding);
     break;
-  case PRODUCTION_SET:
+  case PRODUCTION_SET_BINDING:
     str = ProductionSetBinding_toString(sentence->productionSetBinding);
     break;
-  case LANGUAGE_SENTENCE:
+  case LANGUAGE_BINDING:
     str = LanguageBinding_toString(sentence->languageBinding);
     break;
   }

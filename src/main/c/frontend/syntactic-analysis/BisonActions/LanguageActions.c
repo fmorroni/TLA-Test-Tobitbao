@@ -71,7 +71,7 @@ LanguageBinding* LanguageBinding_new(Id langId, LanguageExpression* langExpressi
 Sentence* LanguageBindingSentence_new(LanguageBinding* languageBinding) {
   logSyntacticAnalyzerAction(__func__);
   Sentence* sentence = safeMalloc(sizeof(Sentence));
-  sentence->type = LANGUAGE_SENTENCE;
+  sentence->type = LANGUAGE_BINDING;
   sentence->languageBinding = languageBinding;
   return sentence;
 }
