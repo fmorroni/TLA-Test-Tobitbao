@@ -79,9 +79,16 @@ bool SymbolTable_putLanguage(Id id, LanguageExpression* expr) {
   return SymbolTable_put(ele);
 }
 
+bool SymbolTable_putProductionSet(Id id, ProductionSet set) {
+  logDebugging(_logger, ADD_TO_SYMBOL_TABLE_FMT_STR("production set"), id.id);
+  SymbolTableEntry entry = {.id = id, .type = PRODUCTION_SET_T, .productionSet = set};
+  SetElement ele = {.symbolTableEntry = entry};
+  return SymbolTable_put(ele);
+}
+
 bool SymbolTable_putSymbolSet(Id id, SymbolSet set) {
   logDebugging(_logger, ADD_TO_SYMBOL_TABLE_FMT_STR("symbol set"), id.id);
-  SymbolTableEntry entry = {.id = id, .type = SYMBOL_SET_T, .set = set};
+  SymbolTableEntry entry = {.id = id, .type = SYMBOL_SET_T, .symbolSet = set};
   SetElement ele = {.symbolTableEntry = entry};
   return SymbolTable_put(ele);
 }

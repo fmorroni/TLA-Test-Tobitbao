@@ -1,4 +1,5 @@
 #include "ProductionActions.h"
+#include "../../../backend/symbol-table/SymbolTable.h"
 #include "../../../shared/Set.h"
 #include "../../../shared/SetElement.h"
 #include "../../../shared/utils.h"
@@ -13,13 +14,20 @@ ProductionSetBinding* ProductionSetBinding_new(Id setId, ProductionSet productio
   productionSetBinding->id = setId;
   productionSetBinding->productions = productions;
 
+  if (!SymbolTable_putProductionSet(setId, productions)) {
+    logAlreadyDefinedError(__func__, setId.id);
+    // TODO: Change this... Prolly the best is to push all errors to a list and if the list isn't
+    // empty at the end we exit with an error code.
+    exit(1);
+  }
+
   return productionSetBinding;
 }
 
 ProductionSet ProductionSet_new(Production* production) {
   logSyntacticAnalyzerAction(__func__);
   ProductionSet set =
-    Set_new(Production_hashEle, Production_equalsEle, NULL, Production_freeEle, Production_toStringEle);
+    Set_new(Production_hashEle, Production_equalsEle, Production_cloneEle, Production_freeEle, Production_toStringEle);
   ProductionSet_add(set, production);
   return set;
 }
@@ -121,4 +129,12 @@ ProductionSet ProductionSet_subtraction(ProductionSet left, ProductionSet right)
   SetIterator_free(rightIter);
   Set_free(right);
   return left;
+}
+
+ProductionSet ProductionSet_clone(Id id) {
+  SymbolTableEntry* entry = SymbolTable_getValidated(id, PRODUCTION_SET_T, __func__);
+  if (entry == NULL) return NULL;
+  free(id.id);
+  ProductionSet set = Set_clone(entry->productionSet);
+  return set;
 }

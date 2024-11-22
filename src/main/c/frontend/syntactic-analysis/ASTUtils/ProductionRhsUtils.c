@@ -4,7 +4,9 @@
 #include "../../../shared/SetElement.h"
 #include "../../../shared/String.h"
 #include "../../../shared/hashUtils.h"
+#include "../../../shared/utils.h"
 #include "../AbstractSyntaxTree.h"
+#include "SymbolUtils.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -68,6 +70,27 @@ bool ProductionRhsRule_equals(ProductionRhsRule* rule1, ProductionRhsRule* rule2
 
 bool ProductionRhsRule_equalsEle(SetElement ele1, SetElement ele2) {
   return ProductionRhsRule_equals(ele1.productionRhsRule, ele2.productionRhsRule);
+}
+
+ProductionRhsRule* ProductionRhsRule_clone(ProductionRhsRule* rule) {
+  ProductionRhsRule* clone = safeMalloc(sizeof(ProductionRhsRule));
+  clone->type = rule->type;
+  switch (rule->type) {
+  case SYMBOL_SYMBOL_T:
+    clone->leftSymbol = Symbol_clone(rule->leftSymbol);
+    clone->rightSymbol = Symbol_clone(rule->rightSymbol);
+    break;
+  case SYMBOL_T:
+    clone->symbol = Symbol_clone(rule->symbol);
+    break;
+  case LAMBDA_T:
+    break;
+  }
+  return clone;
+}
+
+SetElement ProductionRhsRule_cloneEle(SetElement ele) {
+  return (SetElement){.productionRhsRule = ProductionRhsRule_clone(ele.productionRhsRule)};
 }
 
 void ProductionRhsRule_free(ProductionRhsRule* rule) {

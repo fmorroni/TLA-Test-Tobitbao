@@ -11,6 +11,7 @@ void shutdownProductionUtilsModule();
 
 uint32_t Production_hashEle(SetElement ele);
 bool Production_equalsEle(SetElement ele1, SetElement ele2);
+SetElement Production_cloneEle(SetElement ele);
 void Production_freeEle(SetElement ele);
 char* Production_toString(Production* production);
 char* Production_toStringEle(SetElement ele);

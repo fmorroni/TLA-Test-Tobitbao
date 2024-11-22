@@ -39,11 +39,14 @@ bool Symbol_equalsEle(SetElement ele1, SetElement ele2) {
   return Symbol_equals(ele1.symbol, ele2.symbol);
 }
 
+Symbol Symbol_clone(Symbol symbol) {
+  char* clone = strndup(symbol.symbol, symbol.length);
+  if (clone == NULL) exitWithPerror(__func__, "malloc error");
+  return (Symbol){.symbol = clone, .length = symbol.length};
+}
+
 SetElement Symbol_cloneEle(SetElement ele) {
-  char* symbol = strndup(ele.symbol.symbol, ele.symbol.length);
-  if (symbol == NULL) exitWithPerror(__func__, "malloc error");
-  SetElement clone = {.symbol = (Symbol){.symbol = symbol, .length = ele.symbol.length}};
-  return clone;
+  return (SetElement){.symbol = Symbol_clone(ele.symbol)};
 }
 
 void Symbol_freeEle(SetElement ele) {

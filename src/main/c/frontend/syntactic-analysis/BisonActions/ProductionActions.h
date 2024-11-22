@@ -4,9 +4,13 @@
 #include "../AbstractSyntaxTree.h"
 
 ProductionSetBinding* ProductionSetBinding_new(Id setId, ProductionSet productions);
+
+Production* Production_new(Symbol lhs, ProductionRhsRuleSet productionRhsRules);
+
 ProductionSet ProductionSet_new(Production* production);
 ProductionSet ProductionSet_add(ProductionSet set, Production* production);
-Production* Production_new(Symbol lhs, ProductionRhsRuleSet productionRhsRules);
+ProductionSet ProductionSet_clone(Id id);
+
 ProductionSet ProductionSet_union(ProductionSet left, ProductionSet right);
 ProductionSet ProductionSet_intersection(ProductionSet left, ProductionSet right);
 ProductionSet ProductionSet_subtraction(ProductionSet left, ProductionSet right);

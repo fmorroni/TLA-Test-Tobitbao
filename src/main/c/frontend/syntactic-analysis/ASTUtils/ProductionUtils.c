@@ -4,7 +4,9 @@
 #include "../../../shared/SetElement.h"
 #include "../../../shared/String.h"
 #include "../../../shared/hashUtils.h"
+#include "../../../shared/utils.h"
 #include "../AbstractSyntaxTree.h"
+#include "SymbolUtils.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +40,14 @@ bool Production_equals(Production* prod1, Production* prod2) {
 
 bool Production_equalsEle(SetElement ele1, SetElement ele2) {
   return Production_equals(ele1.production, ele2.production);
+}
+
+SetElement Production_cloneEle(SetElement ele) {
+  Production* clone = safeMalloc(sizeof(Production));
+  clone->lhs = Symbol_clone(ele.production->lhs);
+  clone->rhs = Set_clone(ele.production->rhs);
+  SetElement eleClone = {.production = clone};
+  return eleClone;
 }
 
 void Production_freeEle(SetElement ele) {

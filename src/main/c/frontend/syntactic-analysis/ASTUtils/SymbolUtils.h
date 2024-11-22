@@ -11,6 +11,7 @@ void shutdownSymbolUtilsModule();
 
 uint32_t Symbol_hashEle(SetElement ele);
 bool Symbol_equalsEle(SetElement ele1, SetElement ele2);
+Symbol Symbol_clone(Symbol symbol);
 SetElement Symbol_cloneEle(SetElement ele);
 void Symbol_freeEle(SetElement ele);
 char* Symbol_toStringEle(SetElement ele);

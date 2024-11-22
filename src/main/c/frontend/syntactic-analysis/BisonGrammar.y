@@ -188,7 +188,7 @@ productionSetBinding:
 
 productionSet: BRACES_OPEN productions[values] BRACES_CLOSE               { $$ = $values; }
   | BRACES_OPEN productions[values] COMMA BRACES_CLOSE                    { $$ = $values; }
-  // | ID_PROD                                                               { $$ = SymbolSet_clone($1); }
+  | ID_PROD                                                               { $$ = ProductionSet_clone($1); }
   | productionSet[left] UNION productionSet[right]                        { $$ = ProductionSet_union($left, $right); }
   | productionSet[left] INTERSECTION productionSet[right]                 { $$ = ProductionSet_intersection($left, $right); }
   | productionSet[left] SUBTRACTION productionSet[right]                  { $$ = ProductionSet_subtraction($left, $right); }
