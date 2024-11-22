@@ -2,4 +2,4 @@ G = < sigma, N, P, S >
 N = { S, A, B }
 P = { S -> b A | c, A -> a }
 sigma = { a, b, c }
-N = { S, A, B }
+N = { X, Y, Z }
