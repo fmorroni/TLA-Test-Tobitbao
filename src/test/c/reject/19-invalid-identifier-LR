@@ -1,4 +1,0 @@
-G = < LR, N, L, S >
-N = { S, A, B }
-L = { S -> b A | c, A -> a }
-LR = { a, b, c }
