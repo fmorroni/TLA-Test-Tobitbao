@@ -15,6 +15,8 @@ ProductionSetBinding* ProductionSetBinding_new(Id setId, ProductionSet productio
   productionSetBinding->id = setId;
   productionSetBinding->productions = productions;
 
+  if (Set_isEmpty(productions)) Error_emptySetDefinition(__func__, setId.id);
+
   return productionSetBinding;
 }
 
