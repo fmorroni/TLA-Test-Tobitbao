@@ -125,8 +125,11 @@ actually needed.
 %destructor { free($$.id); } ID_SYM
 %destructor { free($$.id); } ID_PROD
 %destructor { free($$.id); } ID_LANG
+%destructor { free($$.symbol); } SYMBOL
 %destructor { Set_free($$); } symbols
+%destructor { Set_free($$); } symbolSet
 %destructor { Set_free($$); } productions
+%destructor { Set_free($$); } productionSet
 %destructor { GrammarDefinition_free($$); } grammarDefinition
 %destructor { SymbolSetBinding_free($$); } symbolSetBinding
 %destructor { ProductionSetBinding_free($$); } productionSetBinding
