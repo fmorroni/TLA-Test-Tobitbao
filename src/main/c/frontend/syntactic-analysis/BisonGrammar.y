@@ -2,6 +2,10 @@
 
 // C file dependencies
 
+#include "AbstractSyntaxTree.h"
+#include "ASTUtils/GrammarUtils.h"
+#include "ASTUtils/SymbolUtils.h"
+#include "ASTUtils/ProductionUtils.h"
 #include "BisonActions/ActionsLogger.h"
 #include "BisonActions/GrammarActions.h"
 #include "BisonActions/LanguageActions.h"
@@ -11,8 +15,9 @@
 #include "BisonActions/SentenceActions.h"
 #include "BisonActions/SymbolActions.h"
 #include "SyntacticAnalyzer.h"
-#include "AbstractSyntaxTree.h"
 #include "../../backend/symbol-table/SymbolTable.h"
+#include "../../shared/Array.h"
+#include "../../shared/Set.h"
 #include <stddef.h>
 
 %}
@@ -109,18 +114,23 @@
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Destructor-Decl.html
  */
-/*
 
+/*
 From the documentation and my own testing these actually seem to only be executed when an error occurs, so they're
 actually needed.
-
-%destructor { printf("\nFreeing id\n\n"); free($$); } ID
-%destructor { printf("\nFreeing SymbolSet\n\n"); Array_free($$); } symbols
-%destructor { printf("\nFreeing ProductionSet\n\n"); Array_free($$); } symbols
-%destructor { printf("\nFreeing GrammarDefinition\n\n"); GrammarDefinition_free($$); } grammarDefinition
-%destructor { printf("\nFreeing SymbolSetBinding\n\n"); SymbolSetBinding_free($$); } symbolSetBinding
-%destructor { printf("\nFreeing ProductionSetBinding\n\n"); ProductionSetBinding_free($$); } symbolSetBinding
 */
+
+%destructor { free($$.id); } ID
+%destructor { free($$.id); } ID_GRAM
+%destructor { free($$.id); } ID_SYM
+%destructor { free($$.id); } ID_PROD
+%destructor { free($$.id); } ID_LANG
+%destructor { Set_free($$); } symbols
+%destructor { Set_free($$); } productions
+%destructor { GrammarDefinition_free($$); } grammarDefinition
+%destructor { SymbolSetBinding_free($$); } symbolSetBinding
+%destructor { ProductionSetBinding_free($$); } productionSetBinding
+%destructor { Array_free($$); } sentences
 
 /**
  * Precedence and associativity.

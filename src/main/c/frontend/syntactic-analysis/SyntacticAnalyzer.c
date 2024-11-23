@@ -38,6 +38,7 @@ extern int yyparse(void);
 void yyerror(const char* error) {
   LexicalAnalyzerContext* lexicalAnalyzerContext = createLexicalAnalyzerContext();
   logError(_logger, "%s (on line %d).", error, lexicalAnalyzerContext->line);
+  destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 }
 
 /* PUBLIC FUNCTIONS */

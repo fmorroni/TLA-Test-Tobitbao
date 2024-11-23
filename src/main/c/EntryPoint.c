@@ -38,13 +38,13 @@ int main(const int count, const char** arguments) {
 
   // Begin compilation process.
   const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
+  Program* program = compilerState.abstractSyntaxtTree;
   CompilationStatus compilationStatus = SUCCEED;
   if (syntacticAnalysisStatus == ACCEPT) {
     // ----------------------------------------------------------------------------------------
     // Beginning of the Backend... ------------------------------------------------------------
 
     logInformation(logger, "Program:");
-    Program* program = compilerState.abstractSyntaxtTree;
 
     semanticValidation(program);
     if (!compilerState.errors) {
@@ -61,6 +61,7 @@ int main(const int count, const char** arguments) {
     releaseProgram(program);
   } else {
     logError(logger, "The syntactic-analysis phase rejects the input program.");
+    if (program != NULL) releaseProgram(program);
     compilationStatus = FAILED;
   }
 
