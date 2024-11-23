@@ -4,4 +4,4 @@ P = { S -> b A | c, A -> a }
 sigma = { a, b, c }
 
 G2 = < sigma, N, P2, S >
-P2 = { S -> b B | c | A, A -> a }
+P2 = { S -> b B | c | b, A -> a }

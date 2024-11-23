@@ -1,6 +1,6 @@
 G = < sigma, N, P, S >
 N = { S, A, B }
 
-P = { S -> b A | c | B, A -> a, B -> d } u { B -> c A }
+P = { S -> b A | c | a B, A -> a, B -> d } u { B -> c A }
 
-sigma = { a, b, c } u { ab, bc } u { hola } u { a }
+sigma = { a, b, c } u { ab, bc } u { hola, d } u { a }

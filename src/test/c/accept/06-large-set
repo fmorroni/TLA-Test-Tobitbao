@@ -1,9 +1,9 @@
 G = < sigma, N, P, S >
 N = { S, A, B }
 P = { 
-  S -> ba A | bb A | bc A | bd A,
-  A -> aa | ab | ac | ad | ae | af | ag | az A,
-  B -> al | am | an am
+  S -> A ba | A bb | A bc | A bd,
+  A -> aa | ab | ac | ad | ae | af | ag | A az,
+  B -> al | am | B am
 }
 sigma = { 
   aa, ab, ac, ad, ae, af, ag, ah, ai, aj, ak, al, am,

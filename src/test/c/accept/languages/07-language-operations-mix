@@ -3,7 +3,7 @@ N = { S, A, B }
 P = { S -> b A | c, A -> a }
 sigma = { a, b, c }
 
-G2 = < sigma2, N2, P2, S2 >
+G2 = < sigma2, N2, P2, S >
 N2 = { S, E, F }
 P2 = { S -> d E | f, E -> e }
 sigma2 = { d, e, f }

@@ -1,7 +1,7 @@
-G = < sigma2, N, P, S >
-N = { S, A, B }
+G = < sigma1, N, P1, S >
+N = { S, A, B, C }
 
-P1 = { S -> B A | c | B, A -> a | b, B -> d, C -> x | y | z }
+P1 = { S -> b A | c | x B, A -> a | b, B -> z C, C -> x | y | z }
 P2 = P1 - { A -> a | b } - { B -> d} - {C -> y}
 
 sigma1 = { a, b, c, x, y, z }

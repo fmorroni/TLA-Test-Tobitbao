@@ -1,4 +1,4 @@
-G = < sigma2, N, P, S >
+G = < sigma2, N, P1, S >
 N = { S, A, B }
 
 P1 = { B -> c A }
