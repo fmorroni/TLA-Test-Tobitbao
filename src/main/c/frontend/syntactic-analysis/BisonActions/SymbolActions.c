@@ -1,4 +1,5 @@
 #include "SymbolActions.h"
+#include "../../../backend/errors/Errors.h"
 #include "../../../backend/symbol-table/SymbolTable.h"
 #include "../../../shared/Set.h"
 #include "../../../shared/SetElement.h"
@@ -19,9 +20,8 @@ SymbolSetBinding* SymbolSetBinding_new(Id setId, SymbolSet set) {
 
 void SymbolSetBinding_initialize(Id setId, SymbolSet set) {
   if (!SymbolTable_putSymbolSet(setId, set)) {
-    logAlreadyDefinedError(__func__, setId.id);
-    // TODO: propper error handling.
-    exit(1);
+    Error_AlreadyDefined(__func__, setId.id);
+    return;
   }
 }
 
@@ -30,9 +30,8 @@ void SymbolSetBinding_assign(Id setId, SymbolSet set) {
   // happens when flex finds the id in the symbol table.
   SymbolTableEntry* entry = SymbolTable_get(setId);
   if (entry->symbolSet != NULL) {
-    logAlreadyDefinedError(__func__, setId.id);
-    // TODO: propper error handling.
-    exit(1);
+    Error_AlreadyDefined(__func__, setId.id);
+    return;
   }
   entry->symbolSet = set;
 }

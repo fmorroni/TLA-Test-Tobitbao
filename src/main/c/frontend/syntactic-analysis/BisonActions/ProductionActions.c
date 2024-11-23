@@ -1,4 +1,5 @@
 #include "ProductionActions.h"
+#include "../../../backend/errors/Errors.h"
 #include "../../../backend/symbol-table/SymbolTable.h"
 #include "../../../shared/Set.h"
 #include "../../../shared/SetElement.h"
@@ -19,9 +20,8 @@ ProductionSetBinding* ProductionSetBinding_new(Id setId, ProductionSet productio
 
 void ProductionSetBinding_initialize(Id setId, ProductionSet set) {
   if (!SymbolTable_putProductionSet(setId, set)) {
-    logAlreadyDefinedError(__func__, setId.id);
-    // TODO: propper error handling.
-    exit(1);
+    Error_AlreadyDefined(__func__, setId.id);
+    return;
   }
 }
 
@@ -29,9 +29,8 @@ void ProductionSetBinding_assign(Id setId, ProductionSet set) {
   // Note `entry` should never be NULL.
   SymbolTableEntry* entry = SymbolTable_get(setId);
   if (entry->productionSet != NULL) {
-    logAlreadyDefinedError(__func__, setId.id);
-    // TODO: propper error handling.
-    exit(1);
+    Error_AlreadyDefined(__func__, setId.id);
+    return;
   }
   entry->productionSet = set;
 }

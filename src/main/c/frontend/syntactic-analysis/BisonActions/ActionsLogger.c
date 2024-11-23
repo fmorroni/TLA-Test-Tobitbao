@@ -1,4 +1,3 @@
-#include "../../../shared/ColorMacros.h"
 #include "../../../shared/Logger.h"
 #include "../../../shared/String.h"
 #include <stdarg.h>
@@ -30,10 +29,6 @@ void logSyntacticAnalyzerPushAction(const char* functionName, const char* const 
   vlogDebugging(bisonActionsLogger, effectiveFormat, arguments);
   free(effectiveFormat);
   va_end(arguments);
-}
-
-void logAlreadyDefinedError(const char* functionName, const char* id) {
-  logError(bisonActionsLogger, "%s: " COLORIZE_ID("%s") " already defined.", functionName, id);
 }
 
 void logActionDebug(const char* const format, ...) {

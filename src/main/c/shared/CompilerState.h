@@ -18,6 +18,7 @@ typedef struct {
 
   // A flag that indicates the current state of the compilation so far.
   bool succeed;
+  bool errors;
 
   // TODO: Add an stack to handle nested scopes.
   // TODO: Add a symbol table.

@@ -19,7 +19,7 @@ typedef struct {
 } SymbolTableEntry;
 
 void initializeSymbolTableModule();
-void destroySymbolTableModule();
+void shutdownSymbolTableModule();
 SymbolTableEntry* SymbolTable_get(Id id);
 bool SymbolTable_has(Id id);
 bool SymbolTable_putGrammar(Id id, GrammarDefinition* grammar);

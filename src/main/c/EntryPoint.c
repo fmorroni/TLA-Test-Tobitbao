@@ -1,8 +1,7 @@
-// #include "backend/code-generation/Generator.h"
-// #include "backend/domain-specific/Calculator.h"
+#include "backend/domain-specific/SemanticValidations.h"
+#include "backend/errors/Errors.h"
 #include "backend/symbol-table/SymbolTable.h"
 #include "frontend/lexical-analysis/FlexActions.h"
-#include "frontend/syntactic-analysis/ASTUtils/SentenceUtils.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions/ActionsLogger.h"
 #include "frontend/syntactic-analysis/SyntacticAnalyzer.h"
@@ -20,13 +19,15 @@
  */
 int main(const int count, const char** arguments) {
   Logger* logger = createLogger("EntryPoint");
+  CompilerState compilerState = {.abstractSyntaxtTree = NULL, .succeed = false, .errors = false, .value = 0};
+
   initializeSymbolTableModule();
   initializeFlexActionsModule();
   initializeBisonActionsModule();
   initializeSyntacticAnalyzerModule();
   initializeAbstractSyntaxTreeModule();
-  // initializeCalculatorModule();
-  // initializeGeneratorModule();
+  initializeSemanticValidationModule();
+  initializeErrorsModule(&compilerState);
   Array_initializeLogger();
   Set_initializeLogger();
 
@@ -36,31 +37,23 @@ int main(const int count, const char** arguments) {
   }
 
   // Begin compilation process.
-  CompilerState compilerState = {.abstractSyntaxtTree = NULL, .succeed = false, .value = 0};
   const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
   CompilationStatus compilationStatus = SUCCEED;
   if (syntacticAnalysisStatus == ACCEPT) {
     // ----------------------------------------------------------------------------------------
     // Beginning of the Backend... ------------------------------------------------------------
+
     logInformation(logger, "Program:");
     Program* program = compilerState.abstractSyntaxtTree;
 
-    size_t sentencesLen = Array_getLen(program->sentences);
-    for (int i = 0; i < sentencesLen; ++i) {
-      Sentence* sentence = Array_get(program->sentences, i).sentence;
-      char* sentenceStr = Sentence_toString(sentence);
-      logInformation(logger, "Sentence %d: %s", i, sentenceStr);
-      free(sentenceStr);
+    if (semanticValidation(program)) {
+      // compilerState.value = computeProgram(program);
+      // generate(&compilerState);
+    } else {
+      logError(logger, "The semantic validation phase rejects the input program.");
+      compilationStatus = FAILED;
     }
 
-    // ComputationResult computationResult = computeExpression(program->expression);
-    // if (computationResult.succeed) {
-    //   compilerState.value = computationResult.value;
-    //   generate(&compilerState);
-    // } else {
-    //   logError(logger, "The computation phase rejects the input program.");
-    //   compilationStatus = FAILED;
-    // }
     // ...end of the Backend. -----------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     logDebugging(logger, "Releasing AST resources...");
@@ -71,15 +64,15 @@ int main(const int count, const char** arguments) {
   }
 
   logDebugging(logger, "Releasing modules resources...");
-  Array_freeLogger();
   Set_freeLogger();
-  // shutdownGeneratorModule();
-  // shutdownCalculatorModule();
+  Array_freeLogger();
+  shutdownErrorsModule();
+  shutdownSemanticValidationModule();
   shutdownAbstractSyntaxTreeModule();
   shutdownSyntacticAnalyzerModule();
   shutdownBisonActionsModule();
   shutdownFlexActionsModule();
-  destroySymbolTableModule();
+  shutdownSymbolTableModule();
   logDebugging(logger, "Compilation is done.");
   destroyLogger(logger);
   return compilationStatus;
