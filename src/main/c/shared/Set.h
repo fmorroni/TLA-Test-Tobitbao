@@ -34,6 +34,7 @@ typedef char* (*Set_ToStringEleFn)(SetElement ele);
  */
 bool Set_add(Set set, SetElement ele);
 Set Set_clone(Set set);
+size_t Set_count(Set set);
 /**
  * @return pointer to element if found, `NULL` otherwise.
  */
@@ -42,6 +43,7 @@ void Set_free(Set set);
 void Set_freeLogger();
 void Set_freeNotElements(Set set);
 bool Set_has(Set set, SetElement ele);
+bool Set_hasVoidIntersection(Set left, Set right);
 void Set_initializeLogger();
 /**
  * Removes and frees all elements from `left` that aren't on present in `right`.

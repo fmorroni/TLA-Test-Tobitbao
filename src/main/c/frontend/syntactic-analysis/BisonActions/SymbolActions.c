@@ -15,12 +15,14 @@ SymbolSetBinding* SymbolSetBinding_new(Id setId, SymbolSet set) {
   symbolSetBinding->id = setId;
   symbolSetBinding->set = set;
 
+  if (Set_isEmpty(set)) Error_emptySetDefinition(__func__, setId.id);
+
   return symbolSetBinding;
 }
 
 void SymbolSetBinding_initialize(Id setId, SymbolSet set) {
   if (!SymbolTable_putSymbolSet(setId, set)) {
-    Error_AlreadyDefined(__func__, setId.id);
+    Error_alreadyDefined(__func__, setId.id);
     return;
   }
 }
@@ -30,7 +32,7 @@ void SymbolSetBinding_assign(Id setId, SymbolSet set) {
   // happens when flex finds the id in the symbol table.
   SymbolTableEntry* entry = SymbolTable_get(setId);
   if (entry->symbolSet != NULL) {
-    Error_AlreadyDefined(__func__, setId.id);
+    Error_alreadyDefined(__func__, setId.id);
     return;
   }
   entry->symbolSet = set;

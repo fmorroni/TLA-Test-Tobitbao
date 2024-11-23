@@ -89,6 +89,11 @@ Set Set_clone(Set set) {
   return clone;
 }
 
+size_t Set_count(Set set) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  return set->count;
+}
+
 SetElement* Set_find(Set set, SetElement ele) {
   if (set == NULL) SET_INSTANCE_NULL;
   uint32_t idx;
@@ -133,6 +138,21 @@ void Set_freeNotElements(Set set) {
 
 bool Set_has(Set set, SetElement ele) {
   return Set_find(set, ele) != NULL;
+}
+
+bool Set_hasVoidIntersection(Set left, Set right) {
+  if (left == NULL || right == NULL) SET_INSTANCE_NULL;
+  bool voidIntersection = true;
+  for (int i = 0; i < left->capacity; ++i) {
+    Node* node = left->nodes[i];
+    while (node != NULL) {
+      if (Set_has(right, node->element)) {
+        voidIntersection = false;
+        break;
+      } else node = node->next;
+    }
+  }
+  return voidIntersection;
 }
 
 void Set_initializeLogger() {

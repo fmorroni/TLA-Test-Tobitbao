@@ -44,10 +44,9 @@ int main(const int count, const char** arguments) {
     // ----------------------------------------------------------------------------------------
     // Beginning of the Backend... ------------------------------------------------------------
 
-    logInformation(logger, "Program:");
-
     semanticValidation(program);
     if (!compilerState.errors) {
+      logInformation(logger, "Program:");
       // compilerState.value = computeProgram(program);
       // generate(&compilerState);
     } else {

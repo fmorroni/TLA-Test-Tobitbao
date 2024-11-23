@@ -63,7 +63,7 @@ LanguageBinding* LanguageBinding_new(Id langId, LanguageExpression* langExpressi
   languageBinding->languageExpression = langExpression;
 
   if (!SymbolTable_putLanguage(langId, langExpression)) {
-    Error_AlreadyDefined(__func__, langId.id);
+    Error_alreadyDefined(__func__, langId.id);
     return NULL;
   }
 
