@@ -46,7 +46,8 @@ int main(const int count, const char** arguments) {
     logInformation(logger, "Program:");
     Program* program = compilerState.abstractSyntaxtTree;
 
-    if (semanticValidation(program)) {
+    semanticValidation(program);
+    if (!compilerState.errors) {
       // compilerState.value = computeProgram(program);
       // generate(&compilerState);
     } else {

@@ -27,17 +27,14 @@ bool semanticValidation(Program* program) {
 
       if (terminalSet == NULL) {
         Error_IncompatibleType(__func__, grammar->terminalSetId.id);
-        errors = true;
         break;
       }
       if (nonTerminalSet == NULL) {
         Error_IncompatibleType(__func__, grammar->nonTerminalSetId.id);
-        errors = true;
         break;
       }
       if (productionSet == NULL) {
         Error_IncompatibleType(__func__, grammar->productionSetId.id);
-        errors = true;
         break;
       }
 
