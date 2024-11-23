@@ -13,7 +13,7 @@ GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id pr
   grammar->terminalSetId = terminalSetId;
   grammar->nonTerminalSetId = nonTerminalSetId;
   grammar->productionSetId = productionSetId;
-  grammar->initialSymbolId = initialSymbolId;
+  grammar->initialSymbol = initialSymbolId;
 
   if (!SymbolTable_putGrammar(grammarId, grammar)) {
     Error_AlreadyDefined(__func__, grammarId.id);

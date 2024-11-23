@@ -22,7 +22,7 @@ void GrammarDefinition_free(GrammarDefinition* grammarDefinition) {
   free(grammarDefinition->terminalSetId.id);
   free(grammarDefinition->nonTerminalSetId.id);
   free(grammarDefinition->productionSetId.id);
-  free(grammarDefinition->initialSymbolId.symbol);
+  free(grammarDefinition->initialSymbol.symbol);
   free(grammarDefinition);
 }
 
@@ -32,7 +32,7 @@ char* GrammarDefinition_toString(GrammarDefinition* grammarDefinition) {
     ) ", nonTerminalSetId: " COLORIZE_ID("%s") ", productionSetId: " COLORIZE_ID("%s"
     ) ", initialSymbol: " COLORIZE_SYMBOL("%s") " }",
     grammarDefinition->id.id, grammarDefinition->terminalSetId.id, grammarDefinition->nonTerminalSetId.id,
-    grammarDefinition->productionSetId.id, grammarDefinition->initialSymbolId.symbol
+    grammarDefinition->productionSetId.id, grammarDefinition->initialSymbol.symbol
   );
   return str;
 }
