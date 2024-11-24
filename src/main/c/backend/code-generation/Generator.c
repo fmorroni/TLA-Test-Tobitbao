@@ -29,51 +29,60 @@ void shutdownGeneratorModule() {
 
 /** PRIVATE FUNCTIONS */
 
-static void _generatePrologue(void);
+static void _generatePrologue();
+static void _generateEpilogue();
 static char* _indentation(const unsigned int indentationLevel);
 static void _output(const unsigned int indentationLevel, const char* const format, ...);
 
 static void _generateDFANodes(int indentationLevel, DFA* dfa) {
+  // qi [label="qi", shape=circle, style="bold", color="#00FF00"];
+  // qf [label="qf", shape=doublecircle];
+  // q [label="q", shape=circle];
   SetIterator iter = SetIterator_new(dfa->states);
   while (SetIterator_hasNext(iter)) {
     State state = SetIterator_next(iter)->state;
-    if (Symbol_equals(state, dfa->finalState)) {
-      _output(indentationLevel, "%s(((%s)))\n", state.symbol, state.symbol);
+    if (Symbol_equals(state, dfa->initialState)) {
+      _output(
+        indentationLevel, "%s [label=\"%s\", shape=circle, style=\"bold\", color=\"#00FF00\"];\n", state.symbol,
+        state.symbol
+      );
+    } else if (Symbol_equals(state, dfa->finalState)) {
+      _output(indentationLevel, "%s [label=\"%s\", shape=doublecircle];\n", state.symbol, state.symbol);
     } else {
-      _output(indentationLevel, "%s((%s))\n", state.symbol, state.symbol);
+      _output(indentationLevel, "%s [label=\"%s\", shape=circle];\n", state.symbol, state.symbol);
     }
   }
   SetIterator_free(iter);
 }
 
 static void _generateTransitions(int indentationLevel, DFA* dfa) {
-  // q1 -->|b| T
-  // q2 -->|a,b| T
+  // q1 -> q2 [label="a"];
   size_t len = Array_getLen(dfa->transitions);
   for (int i = 0; i < len; ++i) {
     Transition* transition = Array_get(dfa->transitions, i).transition;
     if (transition->isLambda) {
-      _output(indentationLevel, "%s --> |λ| %s\n", transition->from.symbol, transition->to.symbol);
+      _output(indentationLevel, "%s -> %s [label=\"λ\"]\n", transition->from.symbol, transition->to.symbol);
     } else {
       _output(
-        indentationLevel, "%s --> |%s| %s\n", transition->from.symbol, transition->symbol.symbol, transition->to.symbol
+        indentationLevel, "%s -> %s [label=\"%s\"]\n", transition->from.symbol, transition->to.symbol,
+        transition->symbol.symbol
       );
     }
   }
 }
 
-static void _generateInitialStateColor(int indentationLevel, DFA* dfa) {
-  _output(indentationLevel, "style %s stroke:#00FF00\n\n", dfa->initialState.symbol);
-}
-
 static void _generateDFA(DFA* dfa) {
   _generateDFANodes(1, dfa);
   _generateTransitions(1, dfa);
-  _generateInitialStateColor(1, dfa);
+  _generateEpilogue();
 }
 
 static void _generatePrologue(void) {
-  _output(0, "flowchart LR\n");
+  _output(0, "digraph {\n");
+}
+
+static void _generateEpilogue(void) {
+  _output(0, "}\n");
 }
 
 /**
@@ -107,7 +116,7 @@ void generate() {
   SetIterator dfaIter = DfaTableIterator_new();
   while (DfaTableIterator_hasNext(dfaIter)) {
     DFA* dfa = DfaTableIterator_next(dfaIter);
-    _output(0, "------------ Code for DFA %s ------------\n\n", dfa->id.id);
+    _output(0, "\n------------ Code for DFA %s ------------\n\n", dfa->id.id);
     _generatePrologue();
     _generateDFA(dfa);
     // _generateEpilogue(compilerState->value);
