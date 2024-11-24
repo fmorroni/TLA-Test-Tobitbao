@@ -121,6 +121,7 @@ ProductionSet ProductionSet_intersection(ProductionSet left, ProductionSet right
       Set_remove(left, ele);
     } else {
       Set_intersection(leftProd->rhs, foundEle->production->rhs);
+      if (Set_isEmpty(leftProd->rhs)) Set_remove(left, ele);
     }
   }
   SetIterator_free(leftIter);

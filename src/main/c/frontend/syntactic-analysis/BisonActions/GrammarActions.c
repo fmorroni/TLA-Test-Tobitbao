@@ -15,7 +15,11 @@ GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id pr
   grammar->productionSetId = productionSetId;
   grammar->initialSymbol = initialSymbolId;
 
-  SymbolTable_putGrammar(grammarId, grammar);
+  SymbolTable_putGrammarDefinition(grammarId, grammar);
 
   return grammar;
+}
+
+void GrammarDefinition_alreadyDefined(Id grammarId) {
+  Error_alreadyDefined(__func__, grammarId.id);
 }

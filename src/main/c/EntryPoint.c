@@ -1,3 +1,5 @@
+#include "backend/code-generation/Generator.h"
+#include "backend/domain-specific/DFAGenerator.h"
 #include "backend/domain-specific/SemanticValidations.h"
 #include "backend/errors/Errors.h"
 #include "backend/symbol-table/SymbolTable.h"
@@ -28,6 +30,7 @@ int main(const int count, const char** arguments) {
   initializeAbstractSyntaxTreeModule();
   initializeSemanticValidationModule();
   initializeErrorsModule(&compilerState);
+  initializeGeneratorModule();
   Array_initializeLogger();
   Set_initializeLogger();
 
@@ -47,8 +50,8 @@ int main(const int count, const char** arguments) {
     semanticValidation(program);
     if (!compilerState.errors) {
       logInformation(logger, "Program:");
-      // compilerState.value = computeProgram(program);
-      // generate(&compilerState);
+      generateDFAs(program);
+      generate();
     } else {
       logError(logger, "The semantic validation phase rejects the input program.");
       compilationStatus = FAILED;
@@ -67,13 +70,14 @@ int main(const int count, const char** arguments) {
   logDebugging(logger, "Releasing modules resources...");
   Set_freeLogger();
   Array_freeLogger();
+  shutdownGeneratorModule();
+  shutdownSymbolTableModule();
   shutdownErrorsModule();
   shutdownSemanticValidationModule();
   shutdownAbstractSyntaxTreeModule();
   shutdownSyntacticAnalyzerModule();
   shutdownBisonActionsModule();
   shutdownFlexActionsModule();
-  shutdownSymbolTableModule();
   logDebugging(logger, "Compilation is done.");
   destroyLogger(logger);
   return compilationStatus;

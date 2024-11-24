@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 bool semanticValidation(Program* program);
-void computeProgram(Program* program);
+// void computeProgram(Program* program);
 
 void initializeSemanticValidationModule();
 void shutdownSemanticValidationModule();

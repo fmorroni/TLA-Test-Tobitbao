@@ -2,6 +2,7 @@
 #define SET_H
 
 // AbstractSyntaxTree.h has to be included because clang is stupid when dealing with forward declarations...
+#include "../../c/backend/symbol-table/SymbolTable.h"
 #include "../../c/frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "SetElement.h"
 #include <stdbool.h>
@@ -10,7 +11,6 @@
 
 #pragma clang diagnostic ignored "-Wtypedef-redefinition"
 typedef struct SetCDT* Set;
-
 typedef struct SetIteratorCDT* SetIterator;
 
 typedef SetElement (*Set_CloneEleFn)(SetElement ele);
@@ -25,6 +25,7 @@ typedef uint32_t (*Set_HashEleFn)(SetElement ele);
  *         The caller is responsible for freeing the allocated memory.
  */
 typedef char* (*Set_ToStringEleFn)(SetElement ele);
+typedef SetElement (*Set_Map)(SetElement ele);
 
 /**
  * Add `ele` to `set` if not already present. If already present and `freeEleFn`
@@ -34,6 +35,7 @@ typedef char* (*Set_ToStringEleFn)(SetElement ele);
  */
 bool Set_add(Set set, SetElement ele);
 Set Set_clone(Set set);
+Set Set_cloneEmpty(Set set);
 size_t Set_count(Set set);
 /**
  * @return pointer to element if found, `NULL` otherwise.
@@ -51,6 +53,7 @@ void Set_initializeLogger();
  */
 void Set_intersection(Set left, Set right);
 bool Set_isEmpty(Set set);
+Set Set_map(Set set, Set_Map mapEleFn);
 Set Set_new(
   Set_HashEleFn hashEleFn, Set_EqualsEleFn equalsEleFn, Set_CloneEleFn cloneEleFn, Set_FreeEleFn freeEleFn,
   Set_ToStringEleFn toStringEleFn

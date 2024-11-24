@@ -18,11 +18,29 @@ typedef struct ArrayCDT {
   ArrayElement* values;
   FreeEleFn freeEleFn;
   ToStringEleFn toStringEleFn;
+  Array_CloneEleFn cloneEleFn;
 } ArrayCDT;
 
 void growBy(Array array, size_t extraCapacity);
 void growTo(Array array, size_t newCapacity);
 int64_t toRealIdx(Array array, int64_t idx);
+
+Array Array_clone(Array array) {
+  Array clone = Array_cloneEmpty(array);
+
+  for (int i = 0; i < array->length; ++i) {
+    Array_push(clone, array->cloneEleFn(array->values[i]));
+  }
+
+  return clone;
+}
+
+Array Array_cloneEmpty(Array array) {
+  if (array == NULL) ARRAY_INSTANCE_NULL_EXIT;
+  if (array->cloneEleFn == NULL) exitInvalidArgument(__func__, "`cloneEleFn` can't be NULL");
+  Array clone = Array_newCloneable(array->capacity, array->freeEleFn, array->toStringEleFn, array->cloneEleFn);
+  return clone;
+}
 
 void Array_concat(Array dest, Array src) {
   if (dest == NULL) exitInvalidArgument(__func__, "Destination can't be NULL");
@@ -75,6 +93,12 @@ void Array_initializeLogger() {
  * @return A heap-allocated `Array`. The caller is responsible for freeing the allocated memory.
  */
 Array Array_new(size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStringEleFn) {
+  return Array_newCloneable(initialCapacity, freeEleFn, toStringEleFn, NULL);
+}
+
+Array Array_newCloneable(
+  size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStringEleFn, Array_CloneEleFn cloneEleFn
+) {
   ArrayCDT* array = malloc(sizeof(ArrayCDT));
   if (array == NULL) exitWithPerror(__func__, "malloc error");
   array->capacity = initialCapacity ? initialCapacity : 1;
@@ -86,6 +110,7 @@ Array Array_new(size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStr
   array->length = 0;
   array->freeEleFn = freeEleFn;
   array->toStringEleFn = toStringEleFn;
+  array->cloneEleFn = cloneEleFn;
   return array;
 }
 

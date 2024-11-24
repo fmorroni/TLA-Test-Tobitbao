@@ -19,7 +19,10 @@ typedef void (*FreeEleFn)(ArrayElement ele);
  *         The caller is responsible for freeing the allocated memory.
  */
 typedef char* (*ToStringEleFn)(ArrayElement ele);
+typedef ArrayElement (*Array_CloneEleFn)(ArrayElement ele);
 
+Array Array_clone(Array array);
+Array Array_cloneEmpty(Array array);
 /**
  * @param `dest` Destination array, all elements from `src` will be pushed to `dest`.
  * @param `src` Source array. Will be freed after call to prevent double free errors on the elements.
@@ -31,6 +34,9 @@ ArrayElement Array_get(Array array, int64_t idx);
 size_t Array_getLen(Array array);
 void Array_initializeLogger();
 Array Array_new(size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStringEleFn);
+Array Array_newCloneable(
+  size_t initialCapacity, FreeEleFn freeEleFn, ToStringEleFn toStringEleFn, Array_CloneEleFn cloneEleFn
+);
 void Array_pop(Array array);
 void Array_printInfo(Array array);
 void Array_push(Array array, ArrayElement ele);

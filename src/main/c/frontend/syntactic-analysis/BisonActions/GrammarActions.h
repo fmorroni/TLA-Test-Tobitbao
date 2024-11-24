@@ -5,5 +5,6 @@
 
 GrammarDefinition*
 GrammarDefinition_new(Id grammarId, Id terminalSetId, Id nonTerminalSetId, Id productionSetId, Symbol initialSymbolId);
+void GrammarDefinition_alreadyDefined(Id grammarId);
 
 #endif

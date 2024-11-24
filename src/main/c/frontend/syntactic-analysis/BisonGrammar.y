@@ -56,6 +56,8 @@
   ProductionRhsRule* productionRhsRule;
   LanguageBinding* languageBinding;
   LanguageExpression* languageExpression;
+
+  // void* discardedGrammarDefinition;
 }
 
 /** Terminals. */
@@ -88,6 +90,7 @@
 %token <token> UNKNOWN
 
 /** Non-terminals. */
+// %type <discardedGrammarDefinition> discardedGrammarDefinition
 %type <grammarDefinition> grammarDefinition
 %type <languageBinding> languageBinding
 %type <languageExpression> languageExpression
@@ -173,6 +176,13 @@ grammarDefinition:
                                                          $grammarId, $terminalsId, $nonTerminalsId, $productionsId, $initialSymbol
                                                        );
                                                 }
+// discardedGrammarDefinition:
+//   ID_GRAM[grammarId] EQUALS ANGLE_BRACKET_OPEN
+//     optionallyDefinedIdSym COMMA
+//     optionallyDefinedIdSym COMMA
+//     optionallyDefinedIdProd COMMA
+//     SYMBOL[initialSymbol]
+//   ANGLE_BRACKET_CLOSE                           { $$ = NULL; GrammarDefinition_alreadyDefined($grammarId); }
 
 optionallyDefinedIdSym: ID                      { $$ = $1; SymbolTable_putSymbolSet($1, NULL); }
   | ID_SYM                                      { $$ = $1; }

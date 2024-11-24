@@ -1,4 +1,6 @@
 #include "SymbolTable.h"
+#include "../../backend/domain-specific/DFA.h"
+#include "../../backend/domain-specific/Grammar.h"
 #include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "../../shared/ColorMacros.h"
 #include "../../shared/Logger.h"
@@ -14,20 +16,27 @@
 
 static Logger* _logger = NULL;
 static Set symbolTable = NULL;
+static Set grammarTable = NULL;
+static Set dfaTable = NULL;
 
 uint32_t SymbolTable_hashEleFn(SetElement ele);
 bool SymbolTable_equalsEleFn(SetElement ele1, SetElement ele2);
-void SymbolTable_freeEleFn(SetElement ele);
+void GrammarTable_freeEleFn(SetElement ele);
+void DfaTable_freeEleFn(SetElement ele);
 
 void initializeSymbolTableModule() {
   _logger = createLogger("SymbolTableLogger");
   symbolTable = Set_new(SymbolTable_hashEleFn, SymbolTable_equalsEleFn, NULL, NULL, NULL);
+  grammarTable = Set_new(SymbolTable_hashEleFn, SymbolTable_equalsEleFn, NULL, GrammarTable_freeEleFn, NULL);
+  dfaTable = Set_new(SymbolTable_hashEleFn, SymbolTable_equalsEleFn, NULL, DfaTable_freeEleFn, NULL);
 }
 
 void shutdownSymbolTableModule() {
   logDebugging(_logger, "Destroying symbol table");
   destroyLogger(_logger);
   Set_free(symbolTable);
+  Set_free(grammarTable);
+  Set_free(dfaTable);
 }
 
 SymbolTableEntry* SymbolTable_get(Id id) {
@@ -46,9 +55,9 @@ bool SymbolTable_put(SetElement ele) {
   return Set_add(symbolTable, ele);
 }
 
-bool SymbolTable_putGrammar(Id id, GrammarDefinition* grammar) {
+bool SymbolTable_putGrammarDefinition(Id id, GrammarDefinition* grammar) {
   logDebugging(_logger, ADD_TO_SYMBOL_TABLE_FMT_STR("grammar"), id.id);
-  SymbolTableEntry entry = {.id = id, .type = GRAMMAR_T, .grammar = grammar};
+  SymbolTableEntry entry = {.id = id, .type = GRAMMAR_DEFINITION_T, .grammarDefinition = grammar};
   SetElement ele = {.symbolTableEntry = entry};
   return SymbolTable_put(ele);
 }
@@ -74,6 +83,30 @@ bool SymbolTable_putSymbolSet(Id id, SymbolSet set) {
   return SymbolTable_put(ele);
 }
 
+bool GrammarTable_put(Id id, Grammar* grammar) {
+  SymbolTableEntry entry = {.id = id, .grammar = grammar};
+  SetElement ele = {.symbolTableEntry = entry};
+  return Set_add(grammarTable, ele);
+}
+
+Grammar* GrammarTable_get(Id id) {
+  SymbolTableEntry entry = {.id = id};
+  SetElement ele = {.symbolTableEntry = entry};
+  return Set_find(grammarTable, ele)->symbolTableEntry.grammar;
+}
+
+DFA* DfaTable_get(Id id) {
+  SymbolTableEntry entry = {.id = id};
+  SetElement ele = {.symbolTableEntry = entry};
+  return Set_find(dfaTable, ele)->symbolTableEntry.dfa;
+}
+
+bool DfaTable_put(Id id, DFA* dfa) {
+  SymbolTableEntry entry = {.id = id, .dfa = dfa};
+  SetElement ele = {.symbolTableEntry = entry};
+  return Set_add(dfaTable, ele);
+}
+
 // Utils
 
 uint32_t SymbolTable_hashEleFn(SetElement ele) {
@@ -86,13 +119,26 @@ bool SymbolTable_equalsEleFn(SetElement ele1, SetElement ele2) {
   return id1.length == id2.length && strcmp(id1.id, id2.id) == 0;
 }
 
-static char* varTypeStr[] = {
-  [LANGUAGE_T] = "LANGUAGE_T",
-  [SYMBOL_SET_T] = "SYMBOL_SET_T",
-  [PRODUCTION_SET_T] = "PRODUCTION_SET_T",
-  [GRAMMAR_T] = "GRAMMAR_T"
-};
+void GrammarTable_freeEleFn(SetElement ele) {
+  Grammar_free(ele.symbolTableEntry.grammar);
+}
 
-const char* VariableType_toString(VariableType type) {
-  return varTypeStr[type];
+void DfaTable_freeEleFn(SetElement ele) {
+  DFA_free(ele.symbolTableEntry.dfa);
+}
+
+SetIterator DfaTableIterator_new() {
+  return SetIterator_new(dfaTable);
+}
+
+void DfaTableIterator_free(SetIterator iter) {
+  SetIterator_free(iter);
+}
+
+bool DfaTableIterator_hasNext(SetIterator iter) {
+  return SetIterator_hasNext(iter);
+}
+
+DFA* DfaTableIterator_next(SetIterator iter) {
+  return SetIterator_next(iter)->symbolTableEntry.dfa;
 }

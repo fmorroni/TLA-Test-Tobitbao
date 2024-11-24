@@ -1,4 +1,4 @@
 G = < sigma, N, P, S >
 N = { S, A, B }
-P = { S -> b A | c, A -> a }
+P = { S -> b A | c, A -> a, B -> b }
 sigma = { a, b, c }

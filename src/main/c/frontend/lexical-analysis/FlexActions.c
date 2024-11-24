@@ -123,7 +123,7 @@ Token IdLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {
       return ID_SYM;
     case LANGUAGE_T:
       return ID_LANG;
-    case GRAMMAR_T:
+    case GRAMMAR_DEFINITION_T:
       return ID_GRAM;
     case PRODUCTION_SET_T:
       return ID_PROD;

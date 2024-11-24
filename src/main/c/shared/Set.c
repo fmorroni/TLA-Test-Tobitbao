@@ -1,4 +1,6 @@
 #include "Set.h"
+#include "Array.h"
+#include "ArrayElement.h"
 #include "Logger.h"
 #include "SetElement.h"
 #include "String.h"
@@ -38,6 +40,7 @@ typedef struct SetIteratorCDT {
   Node** nodes;
   Node* node;
   size_t capacity;
+  Array nodes2;
 } SetIteratorCDT;
 
 #define INITIAL_CAPACITY 100
@@ -73,9 +76,7 @@ bool Set_add(Set set, SetElement ele) {
 }
 
 Set Set_clone(Set set) {
-  if (set == NULL) SET_INSTANCE_NULL;
-  if (set->cloneEleFn == NULL) exitInvalidArgument(__func__, "Set cloneEleFn can't be NULL for cloning");
-  Set clone = Set_new(set->hashEleFn, set->equalsEleFn, set->cloneEleFn, set->freeEleFn, set->toStringEleFn);
+  Set clone = Set_cloneEmpty(set);
   size_t count = 0;
   for (int i = 0; i < set->capacity; ++i) {
     Node* node = set->nodes[i];
@@ -86,6 +87,13 @@ Set Set_clone(Set set) {
     }
     if (count >= set->count) break;
   }
+  return clone;
+}
+
+Set Set_cloneEmpty(Set set) {
+  if (set == NULL) SET_INSTANCE_NULL;
+  if (set->cloneEleFn == NULL) exitInvalidArgument(__func__, "Set cloneEleFn can't be NULL for cloning");
+  Set clone = Set_new(set->hashEleFn, set->equalsEleFn, set->cloneEleFn, set->freeEleFn, set->toStringEleFn);
   return clone;
 }
 
@@ -178,6 +186,21 @@ void Set_intersection(Set left, Set right) {
 
 bool Set_isEmpty(Set set) {
   return set->count == 0;
+}
+
+Set Set_map(Set set, Set_Map mapEleFn) {
+  Set clone = Set_cloneEmpty(set);
+  size_t count = 0;
+  for (int i = 0; i < set->capacity; ++i) {
+    Node* node = set->nodes[i];
+    while (node != NULL) {
+      Set_add(clone, mapEleFn(node->element));
+      node = node->next;
+      ++count;
+    }
+    if (count >= set->count) break;
+  }
+  return clone;
 }
 
 Set Set_new(
@@ -298,44 +321,34 @@ void Set_union(Set dest, Set src) {
 }
 
 void SetIterator_free(SetIterator iter) {
+  Array_free(iter->nodes2);
   free(iter);
 }
 
 bool SetIterator_hasNext(SetIterator iter) {
   if (iter == NULL) SET_ITER_INSTANCE_NULL;
-  return iter->node != NULL;
+  return iter->idx < Array_getLen(iter->nodes2);
 }
 
 SetIterator SetIterator_new(Set set) {
   if (set == NULL) SET_INSTANCE_NULL;
   SetIterator iterator = safeMalloc(sizeof(SetIteratorCDT));
+  iterator->nodes2 = Array_new(set->capacity, NULL, NULL);
   for (int i = 0; i < set->capacity; ++i) {
     Node* node = set->nodes[i];
-    if (node != NULL) {
-      iterator->idx = i;
-      iterator->nodes = set->nodes;
-      iterator->node = node;
-      iterator->capacity = set->capacity;
-      return iterator;
+    while (node != NULL) {
+      Array_push(iterator->nodes2, (ArrayElement){.setElement = &node->element});
+      node = node->next;
     }
   }
-  iterator->node = NULL;
+  iterator->idx = 0;
   return iterator;
 }
 
 SetElement* SetIterator_next(SetIterator iter) {
   if (iter == NULL) SET_ITER_INSTANCE_NULL;
-  if (iter->node == NULL) return NULL;
-  SetElement* ele = &iter->node->element;
-  iter->node = iter->node->next;
-  if (iter->node == NULL) {
-    for (++iter->idx; iter->idx < iter->capacity; ++iter->idx) {
-      iter->node = iter->nodes[iter->idx];
-      if (iter->node != NULL) break;
-    }
-  }
-
-  return ele;
+  // if (!SetIterator_hasNext(iter)) return NULL;
+  return Array_get(iter->nodes2, iter->idx++).setElement;
 }
 
 //////////////////////////// Internal Functions ////////////////////////////
