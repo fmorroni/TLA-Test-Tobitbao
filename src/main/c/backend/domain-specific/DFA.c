@@ -109,20 +109,22 @@ DFA* DFA_union(DFA* left, DFA* right, int counter) {
   State newFinalState = (State){.symbol = newFinalStateStr, .length = (int)strlen(newFinalStateStr)};
   char* newInitStateStr = safeAsprintf("qi%d", counter);
   State newInitState = (State){.symbol = newInitStateStr, .length = (int)strlen(newInitStateStr)};
+
   Array_push(
     left->transitions, (ArrayElement){.transition = Transition_newWithLambda(newInitState, left->initialState)}
   );
   Array_push(
-    left->transitions,
-    (ArrayElement){.transition = Transition_newWithLambda(newInitState, Symbol_clone(right->initialState))}
+    left->transitions, (ArrayElement){.transition = Transition_newWithLambda(newInitState, right->initialState)}
   );
   Array_push(
     left->transitions, (ArrayElement){.transition = Transition_newWithLambda(left->finalState, newFinalState)}
   );
   Array_push(
-    left->transitions,
-    (ArrayElement){.transition = Transition_newWithLambda(Symbol_clone(right->finalState), newFinalState)}
+    left->transitions, (ArrayElement){.transition = Transition_newWithLambda(right->finalState, newFinalState)}
   );
+
+  free(left->initialState.symbol);
+  free(left->finalState.symbol);
   left->initialState = newInitState;
   left->finalState = newFinalState;
   Set_add(left->states, (SetElement){.state = Symbol_clone(newInitState)});
@@ -130,11 +132,6 @@ DFA* DFA_union(DFA* left, DFA* right, int counter) {
 
   Array_concat(left->transitions, right->transitions);
   right->transitions = NULL;
-  // size_t len = Array_getLen(right->transitions);
-  // for (int i = 0; i < len; ++i) {
-  //   Transition* transition = Array_get(right->transitions, i).transition;
-  // }
-
   Set_union(left->states, right->states);
   right->states = NULL;
   Set_union(left->symbols, right->symbols);
@@ -158,8 +155,7 @@ DFA* DFA_clone(DFA* dfa) {
 
 DFA* DFA_cloneWithIdPrefix(DFA* dfa, Id id) {
   dfa = DFA_clone(dfa);
-  StateSet oldStates = dfa->states;
-  dfa->states = StateSet_addPrefixFreeSrc(oldStates, id.id);
+  dfa->states = StateSet_addPrefixFreeSrc(dfa->states, id.id);
   dfa->transitions = Transitions_addIdPrefix(dfa->transitions, id);
   State oldInitialState = dfa->initialState;
   dfa->initialState = State_addPrefix(oldInitialState, id.id);
@@ -182,15 +178,14 @@ void DFA_free(DFA* dfa) {
 void DFA_print(DFA* dfa) {
   char* transitionsStr = Array_toString(dfa->transitions);
   char* statesStr = Set_toString(dfa->states);
-  printf("DFA %s transitions: %s -- states: %s\n", dfa->id.id, transitionsStr, statesStr);
   free(transitionsStr);
   free(statesStr);
 }
 
 Transition* Transition_newWithSymbol(State from, State to, Symbol symbol) {
   Transition* transition = safeMalloc(sizeof(Transition));
-  transition->from = from;
-  transition->to = to;
+  transition->from = Symbol_clone(from);
+  transition->to = Symbol_clone(to);
   transition->symbol = symbol;
   transition->isLambda = false;
 
@@ -199,8 +194,8 @@ Transition* Transition_newWithSymbol(State from, State to, Symbol symbol) {
 
 Transition* Transition_newWithLambda(State from, State to) {
   Transition* transition = safeMalloc(sizeof(Transition));
-  transition->from = from;
-  transition->to = to;
+  transition->from = Symbol_clone(from);
+  transition->to = Symbol_clone(to);
   transition->isLambda = true;
 
   return transition;
@@ -279,7 +274,7 @@ StateSet StateSet_addPrefix(StateSet states, const char* prefix) {
 
 StateSet StateSet_addPrefixFreeSrc(StateSet srcStates, const char* prefix) {
   StateSet newStates = StateSet_addPrefix(srcStates, prefix);
-  free(srcStates);
+  Set_free(srcStates);
   return newStates;
 }
 
@@ -293,6 +288,8 @@ Array Transitions_addIdPrefix(Array transitions, Id id) {
     State newTo = State_format(transition->to, fmt);
     Transition* newTransition = transition->isLambda ? Transition_newWithLambda(newFrom, newTo)
                                                      : Transition_newWithSymbol(newFrom, newTo, transition->symbol);
+    free(newFrom.symbol);
+    free(newTo.symbol);
     Array_push(newTransitions, (ArrayElement){.transition = newTransition});
   }
   free(fmt);
