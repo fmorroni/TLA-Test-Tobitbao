@@ -1,8 +1,9 @@
-G = < sigma2, N, P1, S >
 N = { S, A, B }
 
-P1 = { B -> c A }
-P2 = { S -> b A | c | B, A -> a, B -> d } n P1
+P1 = { B -> c A | bc, S -> ab B }
+P2 = { S -> b A | c | B, A -> a, B -> d | c A } n P1
 
 sigma1 = { c, ab, bc }
 sigma2 = { a, b, c } n { hola, c } n { a, c } n sigma1
+
+G = < sigma1, N, P1, S >
