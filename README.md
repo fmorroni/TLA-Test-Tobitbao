@@ -10,8 +10,6 @@ A base compiler example, developed with Flex and Bison.
 - [CI/CD](#cicd)
 - [Recommended Extensions](#recommended-extensions)
 - Installation
-  - [Docker](doc/readme/Docker.md)
-  - [Microsoft Windows](doc/readme/Windows.md)
   - [Ubuntu](doc/readme/Ubuntu.md)
 
 ## Environment
