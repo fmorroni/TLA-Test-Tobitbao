@@ -17,8 +17,8 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 
 	# Options for GCC.
 	add_compile_options(-static-libgcc -std=gnu99 -fsanitize=address -D_GNU_SOURCE -DLIBBSD_OVERLAY -I/usr/include/bsd)
-  # add_compile_options(-O3)
-  add_compile_options(-g)
+  add_compile_options(-O3)
+  # add_compile_options(-g)
   add_link_options(-fsanitize=address)
 
 	# Compiles the scanner with Flex.

@@ -16,12 +16,10 @@ void generateDFAs(Program* program) {
     DFA* dfa;
     switch (sentence->type) {
     case GRAMMAR_DEFINITION:
-      printf("Sentence: grammar def\n");
       dfa = DFA_fromGrammar(sentence->grammarDefinition->id, GrammarTable_get(sentence->grammarDefinition->id));
       DfaTable_put(sentence->grammarDefinition->id, dfa);
       break;
     case LANGUAGE_BINDING:
-      printf("Sentence: lang\n");
       dfa = DFA_fromLanguageExpression(sentence->languageBinding->id, sentence->languageBinding->languageExpression);
       DfaTable_put(sentence->languageBinding->id, dfa);
     default:
