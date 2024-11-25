@@ -240,10 +240,10 @@ languageExpression: LANGUAGE PARENTHESIS_OPEN
    PARENTHESIS_CLOSE                                                      { $$ = SimpleLanguageExpression_new($grammarID, LANG_OF_GRAMMAR_T); }
  | ID_LANG[langId]                                                        { $$ = SimpleLanguageExpression_new($langId, LANG_ID_T); }
  | languageExpression[left] UNION languageExpression[right]               { $$ = BinaryLanguageExpression_new($left, $right, LANG_UNION_T); }
- | languageExpression[left] INTERSECTION languageExpression[right]        { $$ = BinaryLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
- | languageExpression[left] SUBTRACTION languageExpression[right]         { $$ = BinaryLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
- | languageExpression[left] CONCATENATION languageExpression[right]       { $$ = BinaryLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
- | languageExpression[expr] CARET REVERSE                                 { $$ = UnaryLanguageExpression_new($expr, LANG_REVERSE_T); }
- | COMPLEMENT languageExpression[expr]                                    { $$ = UnaryLanguageExpression_new($expr, LANG_COMPLEMENT_T); }
+ // | languageExpression[left] INTERSECTION languageExpression[right]        { $$ = BinaryLanguageExpression_new($left, $right, LANG_INTERSECTION_T); }
+ // | languageExpression[left] SUBTRACTION languageExpression[right]         { $$ = BinaryLanguageExpression_new($left, $right, LANG_SUBTRACTION_T); }
+ // | languageExpression[left] CONCATENATION languageExpression[right]       { $$ = BinaryLanguageExpression_new($left, $right, LANG_CONCATENATION_T); }
+ // | languageExpression[expr] CARET REVERSE                                 { $$ = UnaryLanguageExpression_new($expr, LANG_REVERSE_T); }
+ // | COMPLEMENT languageExpression[expr]                                    { $$ = UnaryLanguageExpression_new($expr, LANG_COMPLEMENT_T); }
  | PARENTHESIS_OPEN languageExpression[expr] PARENTHESIS_CLOSE            { $$ = $expr; }
  ;
